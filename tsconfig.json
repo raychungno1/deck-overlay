@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "outDir": "js",
+    "module": "none",
+    "noLib": true,
+    "checkJs": true
+  },
+  "include": ["**/*"]
+}
