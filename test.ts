@@ -7,7 +7,6 @@ var proj = app.project;
 
 // CREATE A FOLDER
 var bin1 = proj.rootItem.createBin("Sequence1");
-// alert(bin1.name);
 
 // RENAME FOLDER
 bin1.name = "Movies";
