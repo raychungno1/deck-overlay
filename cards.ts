@@ -1,10 +1,10 @@
-var COMMON = 5;
-var RARE = 3.75;
-var EPIC = 2.5;
-var LEGENDARY = 1.25;
-var HERO = 0;
+const COMMON = 5;
+const RARE = 3.75;
+const EPIC = 2.5;
+const LEGENDARY = 1.25;
+const HERO = 0;
 
-var cards = {
+const cards: Cards = {
   26000065: {
     name: "mightyMiner",
     cost: 4,
@@ -469,7 +469,7 @@ var cards = {
   },
   28000006: {
     name: "mirror",
-    cost: 0,
+    cost: 1.5,
     rarity: EPIC,
     dsName: "Mirror",
   },
