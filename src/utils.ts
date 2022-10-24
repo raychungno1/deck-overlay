@@ -1,3 +1,12 @@
+const EXCLUDE_BINS = ["TRANSITIONPUNCH_5.0", "SFX"];
+const WIDTH = 1920;
+const HEIGHT = 1080;
+
+const OPACITY = 0;
+const MOTION = 1;
+const POSITION = 0;
+const SCALE = 1;
+
 function findShallow(binName: string, root: ProjectItem) {
   if (!binName || !root) return;
 
@@ -45,10 +54,13 @@ function averageElixir(deck: Cards) {
   return Math.round((total * 10) / 8) / 10;
 }
 
+function time(seconds) {
+  const time = new Time();
+  time.seconds = seconds;
+  return time;
+}
 function setImageLength(image: TrackItem, seconds: number) {
   try {
-    const time = new Time();
-    time.seconds = seconds;
-    image.end = time;
+    image.end = time(seconds);
   } catch (e) {}
 }

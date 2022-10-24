@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "build",
+    "outDir": "../build",
     "module": "none",
     "noLib": true,
     "checkJs": true
