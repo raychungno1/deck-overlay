@@ -2,6 +2,7 @@
  * The $ object provides a number of debugging facilities and informational methods.
  */
 interface $ {
+  deckOverlay: any
   /**
    * The ExtendScript build information.
    */
