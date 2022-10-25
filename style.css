@@ -1,0 +1,119 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #232323;
+  color: #f5f5f5;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+input {
+  display: block;
+  max-width: 100%;
+}
+
+.container {
+  padding: 0.5rem;
+  max-width: 800px;
+  margin: auto;
+}
+
+.player-form {
+  border-bottom: 1px solid #333333;
+}
+
+.form__input {
+  display: flex;
+  align-items: center;
+}
+
+.form__label {
+  font-size: 0.8rem;
+  height: 1rem;
+  color: #b1b1b1;
+  margin: 0;
+  margin-right: 0.5rem;
+}
+
+.form__text {
+  font-size: 0.75rem;
+  padding: 0.25rem;
+  background-color: #161616;
+  border: none;
+  color: #b1b1b1;
+  border: 1px solid #333333;
+  margin-right: 0.5rem;
+}
+
+.form__button, .battle__action {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  color: #b1b1b1;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.title {
+  color: #b1b1b1;
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+.subtitle {
+  color: #959595;
+  font-size: 0.6rem;
+  margin: 0;
+}
+
+.battle {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+}
+
+@media (min-width: 400px) {
+  .battle {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.battle__container {
+  margin-bottom: 1rem;
+}
+
+.details__container {
+  display: flex;
+  margin-right: 2rem;
+}
+
+.blue__container,
+.red__container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.blue__container {
+  margin-right: 1rem;
+}
+
+.red__container {
+  align-items: end;
+}
+
+.deck {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.deck__card {
+  width: 100%;
+}
+
+.battle__action {
+  background: rgb(114, 154, 204);
+  color: #161616;
+  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
+  font-weight: bold;
+}
