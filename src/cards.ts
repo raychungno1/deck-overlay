@@ -5,6 +5,18 @@ const LEGENDARY = 1.25;
 const HERO = 0;
 
 const cards: Cards = {
+  26000077: {
+    name: "monk",
+    cost: 4,
+    rarity: HERO,
+    dsName: "Monk",
+  },
+  26000087: {
+    name: "phoenix",
+    cost: 4,
+    rarity: LEGENDARY,
+    dsName: "Phoenix",
+  },
   26000065: {
     name: "mightyMiner",
     cost: 4,

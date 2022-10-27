@@ -44,7 +44,8 @@ input {
   margin-right: 0.5rem;
 }
 
-.form__button, .battle__action {
+.form__button,
+.battle__action {
   margin: 0;
   padding: 0;
   background: none;
@@ -58,12 +59,16 @@ input {
   color: #b1b1b1;
   font-size: 0.8rem;
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .subtitle {
   color: #959595;
   font-size: 0.6rem;
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .battle {
@@ -108,6 +113,9 @@ input {
 
 .deck__card {
   width: 100%;
+  max-height: 52px;
+  object-fit: contain;
+  object-position: center 75%;
 }
 
 .battle__action {
