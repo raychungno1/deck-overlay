@@ -74,6 +74,7 @@ input {
 .battle {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
+  position: relative;
 }
 
 @media (min-width: 400px) {
@@ -124,4 +125,18 @@ input {
   padding: 0.25rem 0.5rem;
   border-radius: 1rem;
   font-weight: bold;
+}
+
+.error_container {
+  color: #b1b1b1;
+  position: absolute;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.error__icon {
+  font-size: 3rem;
 }

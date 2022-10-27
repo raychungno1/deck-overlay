@@ -36,10 +36,7 @@ async function getBattles(playerId) {
   )
     .then((response) => response.json())
     .then((result) => displayDecks(result))
-    .catch((error) => {
-      alert("Error Fetching Battles: " + error);
-      displayDecks(sampleBattleLog);
-    });
+    .catch((error) => displayError(error));
 }
 
 function elementWithClass(type, className) {
@@ -49,7 +46,8 @@ function elementWithClass(type, className) {
 }
 
 function displayDecks(battlelog) {
-  // alert(`${battlelog[0].team[0].name} v.s. ${battlelog[0].opponent[0].name}`);
+  if (!battlelog || !battlelog.length) return displayError("No Battles Found");
+  // alert(battlelog);
   const battlesEl = document.getElementById("battles");
   while (battlesEl.firstChild) {
     battlesEl.removeChild(battlesEl.firstChild);
@@ -110,4 +108,16 @@ function displayDecks(battlelog) {
     }
     battlesEl.appendChild(battleEl);
   }
+}
+
+function displayError(error) {
+  const battlesEl = document.getElementById("battles");
+  while (battlesEl.firstChild) {
+    battlesEl.removeChild(battlesEl.firstChild);
+  }
+  battlesEl.innerHTML = `
+    <div class="error_container">
+      <i class="fa-solid fa-triangle-exclamation error__icon"></i>
+      <p class="error__msg">Error: ${error}</p>
+    </div>`;
 }
