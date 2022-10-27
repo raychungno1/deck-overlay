@@ -2,11 +2,13 @@
 //@include cards.js;
 //@include sampleReplay.js;
 
+const replay = sampleReplay;
+const flip = false;
+
 $.deckOverlay = {
   battle: () => {
     const proj = app.project;
     const rootBin = proj.rootItem;
-    const flip = true;
 
     // Loading Assets
     const cardsBin = findShallow("cards", rootBin);
@@ -18,7 +20,7 @@ $.deckOverlay = {
     // Parsing Deck Cards
     const blueDeck: Cards = {};
     const redDeck: Cards = {};
-    const battle = sampleReplay.replayData.battle;
+    const battle = replay.replayData.battle;
     for (let i = 0; i < 8; i++) {
       const offset = flip ? 1 : 0;
       const blueId = battle[`deck${offset}`][i].d;
@@ -29,7 +31,7 @@ $.deckOverlay = {
 
     // Parsing First Time Each Red Card Was Played
     const redInit = {};
-    const commands = sampleReplay.replayData.cmd;
+    const commands = replay.replayData.cmd;
     for (let i = 0; i < commands.length; i++) {
       const {
         c: { t2: time, gid: id },
@@ -41,7 +43,7 @@ $.deckOverlay = {
     }
 
     // Creating Sequence
-    const battleLength = sampleReplay.replayData.endTick / 20;
+    const battleLength = replay.replayData.endTick / 20;
     let sampleSeq: Sequence;
     for (let i = 0; i < proj.sequences.numSequences; i++) {
       if (proj.sequences[i].name === "deck-overlay-sample") {
@@ -170,5 +172,3 @@ $.deckOverlay = {
     }
   },
 };
-
-// deckOverlay();

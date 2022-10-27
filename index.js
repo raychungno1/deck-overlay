@@ -1,10 +1,32 @@
 var cs = new CSInterface();
 
-function battleOverlay() {
-  // alert("battle");
-  // replayTag = replayTag.replace("#", "%23");
+async function battleOverlay(replayTag = "", playerName = "") {
+  replayTag = replayTag.replace("#", "%23");
 
-  cs.evalScript("$.deckOverlay.battle()");
+  var myHeaders = new Headers();
+  myHeaders.append("Authorization", `Bearer ${CR_API_KEY}`);
+
+  var requestOptions = {
+    method: "GET",
+    headers: myHeaders,
+    redirect: "follow",
+  };
+
+  await fetch(
+    `https://api.clashroyale.com/v1/replays/${replayTag}`,
+    requestOptions
+  )
+    .then((response) => response.text())
+    .then((result) => {
+      cs.evalScript(`var replay = ${result}`);
+      cs.evalScript(
+        `var flip = ${
+          JSON.parse(result).replayData.battle.avatar0.name !== playerName
+        }`
+      );
+      cs.evalScript(`$.deckOverlay.battle()`);
+    })
+    .catch((error) => alert(error));
 }
 
 getBattles("%23L008PR8C");
@@ -46,8 +68,9 @@ function elementWithClass(type, className) {
 }
 
 function displayDecks(battlelog) {
-  if (!battlelog || !battlelog.length) return displayError("No Battles Found");
-  // alert(battlelog);
+  if (!battlelog || !battlelog.length)
+    return displayError("Error: No Battles Found");
+
   const battlesEl = document.getElementById("battles");
   while (battlesEl.firstChild) {
     battlesEl.removeChild(battlesEl.firstChild);
@@ -89,7 +112,7 @@ function displayDecks(battlelog) {
     redEl.appendChild(redDeckEl);
 
     const btnEl = elementWithClass("button", "battle__action");
-    btnEl.onclick = () => battleOverlay(battle.replayTag);
+    btnEl.onclick = () => battleOverlay(battle.replayTag, battle.team[0].name);
     btnEl.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Overlay';
     battleEl.appendChild(btnEl);
 
@@ -118,6 +141,6 @@ function displayError(error) {
   battlesEl.innerHTML = `
     <div class="error_container">
       <i class="fa-solid fa-triangle-exclamation error__icon"></i>
-      <p class="error__msg">Error: ${error}</p>
+      <p class="error__msg">${error}</p>
     </div>`;
 }
