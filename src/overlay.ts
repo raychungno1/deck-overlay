@@ -21,8 +21,8 @@ $.deckOverlay = {
     const blueDeck: Cards = {};
     const redDeck: Cards = {};
     const battle = replay.replayData.battle;
+    const offset = flip ? 1 : 0;
     for (let i = 0; i < 8; i++) {
-      const offset = flip ? 1 : 0;
       const blueId = battle[`deck${offset}`][i].d;
       const redId = battle[`deck${1 - offset}`][i].d;
       blueDeck[blueId] = cards[blueId];
@@ -31,13 +31,15 @@ $.deckOverlay = {
 
     // Parsing First Time Each Red Card Was Played
     const redInit = {};
+    const redPlayerId =
+      replay.replayData.battle[`avatar${1 - offset}`]["accountID.hi"];
     const commands = replay.replayData.cmd;
     for (let i = 0; i < commands.length; i++) {
       const {
-        c: { t2: time, gid: id },
+        c: { t2: time, gid: id, idHi: playerId },
       } = commands[i];
 
-      if (id in redDeck && !(id in redInit)) {
+      if (playerId == redPlayerId && id in redDeck && !(id in redInit)) {
         redInit[id] = time / 20;
       }
     }
