@@ -46,19 +46,12 @@ function indexOf(arr: string[], val: string) {
   return -1;
 }
 
-function averageElixir(deck: Cards) {
-  let total = 0;
-  for (let key in deck) {
-    total += deck[key].cost;
-  }
-  return Math.round((total * 10) / 8) / 10;
-}
-
 function time(seconds) {
   const time = new Time();
   time.seconds = seconds;
   return time;
 }
+
 function setImageLength(image: TrackItem, seconds: number) {
   try {
     image.end = time(seconds);

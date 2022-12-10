@@ -1,9 +1,11 @@
 //@include utils.js;
-//@include cards.js;
-//@include sampleReplay.js;
 
-const replay = sampleReplay;
-const flip = false;
+const battleLength = 0;
+const blueDeck = {};
+const blueAvgElixir = 0;
+const redDeck = {};
+const redAvgElixir = 0;
+const redInit = {};
 
 $.deckOverlay = {
   battle: () => {
@@ -17,35 +19,7 @@ $.deckOverlay = {
     const avgRedBin = findShallow("avg-elixir-red", rootBin);
     const deckOverlayBin = findShallow("deck-overlay", rootBin);
 
-    // Parsing Deck Cards
-    const blueDeck: Cards = {};
-    const redDeck: Cards = {};
-    const battle = replay.replayData.battle;
-    const offset = flip ? 1 : 0;
-    for (let i = 0; i < 8; i++) {
-      const blueId = battle[`deck${offset}`][i].d;
-      const redId = battle[`deck${1 - offset}`][i].d;
-      blueDeck[blueId] = cards[blueId];
-      redDeck[redId] = cards[redId];
-    }
-
-    // Parsing First Time Each Red Card Was Played
-    const redInit = {};
-    const redPlayerId =
-      replay.replayData.battle[`avatar${1 - offset}`]["accountID.hi"];
-    const commands = replay.replayData.cmd;
-    for (let i = 0; i < commands.length; i++) {
-      const {
-        c: { t2: time, gid: id, idHi: playerId },
-      } = commands[i];
-
-      if (playerId == redPlayerId && id in redDeck && !(id in redInit)) {
-        redInit[id] = time / 20;
-      }
-    }
-
     // Creating Sequence
-    const battleLength = replay.replayData.endTick / 20;
     let sampleSeq: Sequence;
     for (let i = 0; i < proj.sequences.numSequences; i++) {
       if (proj.sequences[i].name === "deck-overlay-sample") {
@@ -64,12 +38,12 @@ $.deckOverlay = {
     seq.videoTracks[0].overwriteClip(deckBoard, 0);
     setImageLength(seq.videoTracks[0].clips[0], battleLength);
 
-    const blueAvg = `blue-${averageElixir(blueDeck) * 10}.png`;
+    const blueAvg = `blue-${blueAvgElixir * 10}.png`;
     const blueAvgImg = findShallow(blueAvg, avgBlueBin);
     seq.videoTracks[1].overwriteClip(blueAvgImg, 0);
     setImageLength(seq.videoTracks[1].clips[0], battleLength);
 
-    const redAvg = `red-${averageElixir(redDeck) * 10}.png`;
+    const redAvg = `red-${redAvgElixir * 10}.png`;
     const redAvgImg = findShallow(redAvg, avgRedBin);
     seq.videoTracks[2].overwriteClip(redAvgImg, 0);
     setImageLength(seq.videoTracks[2].clips[0], battleLength);

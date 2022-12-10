@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ExtensionManifest Version="6.0" ExtensionBundleId="DeckOverlay" ExtensionBundleVersion="1.0.0" ExtensionBundleName="DeckOverlay" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<ExtensionManifest Version="6.0" ExtensionBundleId="DeckOverlayNew" ExtensionBundleVersion="1.0.0" ExtensionBundleName="DeckOverlayNew" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<ExtensionList>
-		<Extension Id="DeckOverlay" Version="1.0" />
+		<Extension Id="DeckOverlayNew" Version="1.0" />
 	</ExtensionList>
 	<ExecutionEnvironment>
 		<HostList>
@@ -16,10 +16,10 @@
 	</ExecutionEnvironment>
 
 	<DispatchInfoList>
-		<Extension Id="DeckOverlay">
+		<Extension Id="DeckOverlayNew">
 			<DispatchInfo>
 				<Resources>
-					<MainPath>./index.html</MainPath>
+					<MainPath>./frontend/index.html</MainPath>
 					<ScriptPath>./build/overlay.js</ScriptPath>
 					<CEFCommandLine>
 						<Parameter>--allow-file-access</Parameter>
@@ -31,7 +31,7 @@
 				</Lifecycle>
 				<UI>
 					<Type>Panel</Type>
-					<Menu>Deck Overlay</Menu>
+					<Menu>Deck Overlay New</Menu>
 					<Geometry>
 						<Size>
 							<Height>300</Height>

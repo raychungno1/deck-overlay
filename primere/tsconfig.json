@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "outDir": "../build",
+    "outDir": "../build/primere",
     "module": "none",
     "noLib": true,
     "checkJs": true
-  },
-  "include": ["**/*.ts"]
+  }
+  // "include": ["**/*.ts"]
 }
