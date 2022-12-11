@@ -38,12 +38,12 @@ $.deckOverlay = {
     seq.videoTracks[0].overwriteClip(deckBoard, 0);
     setImageLength(seq.videoTracks[0].clips[0], battleLength);
 
-    const blueAvg = `blue-${blueAvgElixir * 10}.png`;
+    const blueAvg = `blue-${blueAvgElixir}.png`;
     const blueAvgImg = findShallow(blueAvg, avgBlueBin);
     seq.videoTracks[1].overwriteClip(blueAvgImg, 0);
     setImageLength(seq.videoTracks[1].clips[0], battleLength);
 
-    const redAvg = `red-${redAvgElixir * 10}.png`;
+    const redAvg = `red-${redAvgElixir}.png`;
     const redAvgImg = findShallow(redAvg, avgRedBin);
     seq.videoTracks[2].overwriteClip(redAvgImg, 0);
     setImageLength(seq.videoTracks[2].clips[0], battleLength);
@@ -65,7 +65,6 @@ $.deckOverlay = {
     }
 
     // Adding Red Cards
-    i = 0;
     const white = {
       5: findShallow("whiteCommon.png", cardsBin),
       3.75: findShallow("whiteRare.png", cardsBin),
@@ -74,6 +73,7 @@ $.deckOverlay = {
       0: findShallow("whiteHero.png", cardsBin),
     };
 
+    i = 0;
     for (let key in redDeck) {
       const track = seq.videoTracks[i * 2 + 11];
       track.overwriteClip(findShallow("empty.png", cardsBin), 0);

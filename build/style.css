@@ -6,6 +6,10 @@ body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
+img {
+  display: block;
+}
+
 input {
   display: block;
   max-width: 100%;
@@ -17,7 +21,15 @@ input {
   margin: auto;
 }
 
-.player-form {
+.label-width {
+  width: 8%;
+}
+
+.full-width {
+  width: 85%;
+}
+
+.form {
   border-bottom: 1px solid #333333;
 }
 
@@ -34,9 +46,11 @@ input {
   margin-right: 0.5rem;
 }
 
-.form__text {
+.form__text,
+.form__select {
   font-size: 0.75rem;
   padding: 0.25rem;
+  max-height: 24px;
   background-color: #161616;
   border: none;
   color: #b1b1b1;
@@ -44,15 +58,31 @@ input {
   margin-right: 0.5rem;
 }
 
+.form__select {
+  padding: 0.2rem;
+}
+
 .form__button,
 .battle__action {
   margin: 0;
+  margin-right: 0.25rem;
   padding: 0;
   background: none;
   border: none;
   color: #b1b1b1;
   cursor: pointer;
   font-size: 0.8rem;
+}
+
+.deck-actions__container {
+  margin-right: 2rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.deck-actions {
+  display: flex;
+  margin: 0.25rem 0;
 }
 
 .title {
@@ -136,4 +166,110 @@ input {
 
 .error__icon {
   font-size: 3rem;
+}
+
+.navbar {
+  border-bottom: 1px solid #333333;
+}
+
+.navbar__inner {
+  display: flex;
+}
+
+.navbar__link {
+  margin-right: 1rem;
+  padding: 0.25rem 0;
+  cursor: pointer;
+}
+
+.navbar__link.selected {
+  color: #c7c7c7;
+  border-bottom: 2px solid #b1b1b1;
+}
+
+.page__hidden {
+  display: none;
+}
+
+.form__tall {
+  align-items: flex-start;
+}
+
+.form__matchup {
+  display: flex;
+  margin-bottom: 0.5rem;
+}
+
+.deck__preview {
+  width: 100%;
+  display: flex;
+  padding: 0;
+  padding-left: 10rem;
+  margin-bottom: 0.5rem;
+}
+
+.preview__card {
+  height: 2rem;
+  margin-right: 0.25rem;
+}
+
+.check {
+  margin: 0.25rem;
+  height: 1.5rem;
+  width: 1.5rem;
+  background-color: green;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.matchup__slider {
+  margin-right: 1rem;
+  background: #d3d3d3;
+}
+
+.matchup__label {
+  margin-top: 0.15rem;
+}
+
+.subs__container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.sub__container {
+  width: 33%;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.sub__inner {
+  height: 4.5rem;
+}
+
+.sub__card {
+  height: 4rem;
+  padding-right: 0.5rem;
+  border-right: 1px solid #333333;
+}
+
+.sub__options {
+  display: flex;
+}
+
+.sub__option {
+  margin-left: 0.5rem;
+  height: 2.5rem;
+  position: relative;
+}
+
+.sub__option:hover {
+  opacity: 0.2;
+}
+
+.sub__select {
+  margin-left: 0.5rem;
+  margin-bottom: 0.25rem;
 }

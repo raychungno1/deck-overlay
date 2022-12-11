@@ -1,9 +1,45 @@
 /* @ts-ignore */
 const cs = new CSInterface();
+
+// PAGE INITIALIZATION
+enum Page {
+  BATTLE_OVERLAY,
+  DECK_STATS,
+  DECK_TIPS,
+}
+
+const overlayLink = document.getElementById("battle-overlay");
+const overlayPage = document.getElementById("battle-page");
+overlayLink.onclick = () => selectPage(Page.BATTLE_OVERLAY);
+
+const statsLink = document.getElementById("deck-stats");
+const statsPage = document.getElementById("stats-page");
+statsLink.onclick = () => selectPage(Page.DECK_STATS);
+
+const tipsLink = document.getElementById("deck-tips");
+const tipsPage = document.getElementById("tips-page");
+tipsLink.onclick = () => selectPage(Page.DECK_TIPS);
+
+const links = [overlayLink, statsLink, tipsLink];
+const pages = [overlayPage, statsPage, tipsPage];
+
+function selectPage(target: Page) {
+  for (let i = 0; i < 3; i++) {
+    if (i === target) {
+      links[i].classList.add("selected");
+      pages[i].classList.remove("page__hidden");
+    } else {
+      links[i].classList.remove("selected");
+      pages[i].classList.add("page__hidden");
+    }
+  }
+}
+
+// BATTLE OVERLAY
 loadBattles("#L008PR8C");
 
-const form = document.getElementById("player-form");
-form.addEventListener("submit", (e) => {
+const battleForm = document.getElementById("player-form");
+battleForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const input = <HTMLInputElement>document.getElementById("playerId");
   loadBattles(input.value);
@@ -124,24 +160,76 @@ function displayDecks(battlelog) {
     redEl.appendChild(redSubtitleEl);
     redEl.appendChild(redDeckEl);
 
-    const btnEl = elementWithClass("button", "battle__action");
-    btnEl.onclick = () => battleOverlay(battle.replayTag, battle.team[0].name);
-    btnEl.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Overlay';
-    battleEl.appendChild(btnEl);
-
+    let blueDeckLink = "https://link.clashroyale.com/deck/en?deck=";
+    let redDeckLink = "https://link.clashroyale.com/deck/en?deck=";
     for (let j = 0; j < 8; j++) {
       const blueCard = battle.team[0].cards[j];
       const blueCardEl = elementWithClass("img", "deck__card");
       blueCardEl.src = `../cards/${cards[blueCard.id].name}.png`;
       blueCardEl.alt = blueCard.name;
       blueDeckEl.appendChild(blueCardEl);
+      blueDeckLink += blueCard.id;
+      if (j < 7) blueDeckLink += ";";
 
       const redCard = battle.opponent[0].cards[j];
       const redCardEl = elementWithClass("img", "deck__card");
       redCardEl.src = `../cards/${cards[redCard.id].name}.png`;
       redCardEl.alt = redCard.name;
       redDeckEl.appendChild(redCardEl);
+      redDeckLink += redCard.id;
+      if (j < 7) redDeckLink += ";";
     }
+
+    const deckActionsEl = elementWithClass("div", "deck-actions__container");
+    battleEl.appendChild(deckActionsEl);
+
+    const blueDeckActionsEl = elementWithClass("div", "deck-actions");
+    deckActionsEl.appendChild(blueDeckActionsEl);
+
+    const blueStatBtnEl = elementWithClass("button", "battle__action");
+    blueStatBtnEl.onclick = () => {
+      statDeckLink.value = blueDeckLink;
+      previewDeck();
+      selectPage(Page.DECK_STATS);
+    };
+    blueStatBtnEl.innerHTML = '<i class="fa-solid fa-chart-simple"></i> Stats';
+    blueDeckActionsEl.appendChild(blueStatBtnEl);
+
+    const blueTipsBtnEl = elementWithClass("button", "battle__action");
+    blueTipsBtnEl.onclick = () => {
+      tipsDeckLink.value = blueDeckLink;
+      createSubs();
+      selectPage(Page.DECK_TIPS);
+    };
+    blueTipsBtnEl.innerHTML = '<i class="fa-solid fa-lightbulb"></i> Tips';
+    blueDeckActionsEl.appendChild(blueTipsBtnEl);
+
+    const btnEl = elementWithClass("button", "battle__action deck-actions");
+    btnEl.onclick = () => battleOverlay(battle.replayTag, battle.team[0].name);
+    btnEl.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Overlay';
+    deckActionsEl.appendChild(btnEl);
+
+    const redDeckActionsEl = elementWithClass("div", "deck-actions");
+    deckActionsEl.appendChild(redDeckActionsEl);
+
+    const redStatBtnEl = elementWithClass("button", "battle__action");
+    redStatBtnEl.onclick = () => {
+      statDeckLink.value = redDeckLink;
+      previewDeck();
+      selectPage(Page.DECK_STATS);
+    };
+    redStatBtnEl.innerHTML = '<i class="fa-solid fa-chart-simple"></i> Stats';
+    redDeckActionsEl.appendChild(redStatBtnEl);
+
+    const redTipsBtnEl = elementWithClass("button", "battle__action");
+    redTipsBtnEl.onclick = () => {
+      tipsDeckLink.value = redDeckLink;
+      createSubs();
+      selectPage(Page.DECK_TIPS);
+    };
+    redTipsBtnEl.innerHTML = '<i class="fa-solid fa-lightbulb"></i> Tips';
+    redDeckActionsEl.appendChild(redTipsBtnEl);
+
     battlesEl.appendChild(battleEl);
   }
 }

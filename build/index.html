@@ -1,8 +1,4 @@
 <!DOCTYPE html>
-<!-- This document forms the dockable panel. The button is the <input> tag below. The <style> formats the button. 
-
-		The extendscript is called through the <script type="text/javascript"> tag, which then routes it to use the adobe_cep_.evalScript to interpret that Javascript into Extendscript -->
-
 <html>
   <head>
     <meta charset="utf-8" />
@@ -18,23 +14,220 @@
   </head>
 
   <body>
-    <form class="player-form" id="player-form">
-      <div class="container form__input">
-        <p class="form__label">Player Tag</p>
-        <input
-          class="form__text"
-          type="text"
-          name="playerId"
-          id="playerId"
-          placeholder="Player Tag"
-          value="#L008PR8C"
-        />
-        <button class="form__button">
-          <i class="fas fa-magnifying-glass"></i>
-        </button>
+    <nav class="navbar">
+      <div class="container navbar__inner">
+        <p class="navbar__link title selected" id="battle-overlay">
+          Battle Overlay
+        </p>
+        <p class="navbar__link title" id="deck-stats">Deck Stats</p>
+        <p class="navbar__link title" id="deck-tips">Deck Tips</p>
       </div>
-    </form>
-    <div class="container battle" id="battles">
+    </nav>
+    <div id="battle-page" class="">
+      <form class="form" id="player-form">
+        <div class="container form__input">
+          <p class="form__label label-width">Player Tag</p>
+          <input
+            class="form__text"
+            type="text"
+            name="playerId"
+            id="playerId"
+            placeholder="Player Tag"
+            value="#L008PR8C"
+          />
+          <button class="form__button">
+            <i class="fas fa-magnifying-glass"></i>
+          </button>
+        </div>
+      </form>
+      <div class="container battle" id="battles"></div>
+    </div>
+    <div id="stats-page" class="page__hidden">
+      <form class="form" id="stat-form">
+        <div class="container form__input">
+          <p class="form__label label-width">Deck Link</p>
+          <input
+            class="form__text full-width"
+            type="text"
+            name="stat-deck-link"
+            id="stat-deck-link"
+            placeholder="Deck Link"
+            value="https://link.clashroyale.com/deck/en?deck=26000063;26000067;26000068;26000077;26000087;28000006;28000012;28000016"
+          />
+        </div>
+        <div class="container deck__preview" id="stat-deck-preview"></div>
+        <div class="container form__input">
+          <p class="form__label label-width">Attack</p>
+          <input
+            class="matchup__slider"
+            type="range"
+            id="stat-attack"
+            name="stat-attack"
+            min="0"
+            max="5"
+            value="3"
+          />
+          <p class="form__label" id="stat-attack-lbl">3</p>
+        </div>
+        <div class="container form__input">
+          <p class="form__label label-width">Defense</p>
+          <input
+            class="matchup__slider"
+            type="range"
+            id="stat-defense"
+            name="stat-defense"
+            min="0"
+            max="5"
+            value="3"
+          />
+          <p class="form__label" id="stat-defense-lbl">3</p>
+        </div>
+        <div class="container form__input">
+          <p class="form__label label-width">Versatility</p>
+          <input
+            class="matchup__slider"
+            type="range"
+            id="stat-vers"
+            name="stat-vers"
+            min="0"
+            max="5"
+            value="3"
+          />
+          <p class="form__label" id="stat-vers-lbl">3</p>
+        </div>
+        <div class="container form__input">
+          <p class="form__label label-width">Synergy</p>
+          <input
+            class="matchup__slider"
+            type="range"
+            id="stat-synergy"
+            name="stat-synergy"
+            min="0"
+            max="5"
+            value="3"
+          />
+          <p class="form__label" id="stat-synergy-lbl">3</p>
+        </div>
+        <div class="container">
+          <button class="battle__action" type="submit">
+            <i class="fa-solid fa-shield-halved"></i> Overlay
+          </button>
+        </div>
+      </form>
+    </div>
+    <div id="tips-page" class="page__hidden">
+      <form class="form" id="tips-form">
+        <div class="container form__input">
+          <p class="form__label label-width">Deck Link</p>
+          <input
+            class="form__text full-width"
+            type="text"
+            name="tips-deck-link"
+            id="tips-deck-link"
+            placeholder="Deck Link"
+            value="https://link.clashroyale.com/deck/en?deck=26000063;26000067;26000068;26000077;26000087;28000006;28000012;28000016"
+          />
+        </div>
+        <div class="container deck__preview" id="tips-deck-preview"></div>
+        <div class="container form__input">
+          <p class="form__label label-width">Playstyle</p>
+          <select class="form__select" name="playstyle" id="playstyle">
+            <option value="beatdown">Beatdown</option>
+            <option value="control">Control</option>
+            <option value="punish">Punish</option>
+            <option value="chip">Chip</option>
+            <option value="siege">Siege</option>
+            <option value="bait">Spell Bait</option>
+            <option value="split">Split Lane</option>
+          </select>
+        </div>
+        <div class="container form__input form__tall">
+          <p class="form__label label-width matchup__label">Matchups</p>
+          <div>
+            <div class="form__matchup">
+              <select
+                class="form__select"
+                name="matchup-list"
+                id="matchup-1-list"
+              ></select>
+              <input
+                class="matchup__slider"
+                type="range"
+                id="matchup-1-slider"
+                name="matchup"
+                min="0"
+                max="100"
+                step="5"
+                value="75"
+              />
+              <p class="form__label" id="matchup-1-lbl">75%</p>
+            </div>
+            <div class="form__matchup">
+              <select
+                class="form__select"
+                name="matchup-list"
+                id="matchup-2-list"
+              ></select>
+              <input
+                class="matchup__slider"
+                type="range"
+                id="matchup-2-slider"
+                name="matchup"
+                min="0"
+                max="100"
+                step="5"
+                value="65"
+              />
+              <p class="form__label" id="matchup-2-lbl">65%</p>
+            </div>
+            <div class="form__matchup">
+              <select
+                class="form__select"
+                name="matchup-list"
+                id="matchup-3-list"
+              ></select>
+              <input
+                class="matchup__slider"
+                type="range"
+                id="matchup-3-slider"
+                name="matchup"
+                min="0"
+                max="100"
+                step="5"
+                value="50"
+              />
+              <p class="form__label" id="matchup-3-lbl">50%</p>
+            </div>
+            <div class="form__matchup">
+              <select
+                class="form__select"
+                name="matchup-list"
+                id="matchup-4-list"
+              ></select>
+              <input
+                class="matchup__slider"
+                type="range"
+                id="matchup-4-slider"
+                name="matchup"
+                min="0"
+                max="100"
+                step="5"
+                value="40"
+              />
+              <p class="form__label" id="matchup-4-lbl">40%</p>
+            </div>
+          </div>
+        </div>
+        <div class="container form__input form__tall">
+          <p class="form__label label-width">Substitutes</p>
+          <div class="subs__container" id="subs-container"></div>
+        </div>
+        <div class="container">
+          <button class="battle__action" type="submit">
+            <i class="fa-solid fa-shield-halved"></i> Overlay
+          </button>
+        </div>
+      </form>
     </div>
   </body>
 </html>

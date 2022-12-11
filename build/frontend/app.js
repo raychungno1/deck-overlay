@@ -34,6 +34,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var _this = this;
 var requestOptions = function () {
     return {
@@ -755,12 +766,206 @@ var cards = {
         dsName: "RoyalDelivery"
     }
 };
+var stats = ["attack", "defense", "vers", "synergy"];
+var _loop_1 = function (stat) {
+    var slider = document.getElementById("stat-".concat(stat));
+    var label = document.getElementById("stat-".concat(stat, "-lbl"));
+    label.textContent = slider.value;
+    slider.oninput = function (e) {
+        label.textContent = e.target.value;
+    };
+};
+for (var _i = 0, stats_1 = stats; _i < stats_1.length; _i++) {
+    var stat = stats_1[_i];
+    _loop_1(stat);
+}
+var statDeckPreview = document.getElementById("stat-deck-preview");
+var statDeckLink = (document.getElementById("stat-deck-link"));
+var previewDeck = function () {
+    var cardIds = statDeckLink.value.match(/(\d{8})/g);
+    clearElement(statDeckPreview);
+    if (cardIds && cardIds.length === 8 && cardIds.every(function (id) { return id in cards; })) {
+        cardIds.forEach(function (id) {
+            var previewCardEl = elementWithClass("img", "preview__card");
+            previewCardEl.src = "../cards/".concat(cards[id].name, ".png");
+            previewCardEl.alt = cards[id].name;
+            statDeckPreview.appendChild(previewCardEl);
+        });
+        var checkEl = elementWithClass("div", "check");
+        checkEl.innerHTML = '<i class="fa-solid fa-check"></i>';
+        statDeckPreview.appendChild(checkEl);
+    }
+};
+previewDeck();
+statDeckLink.addEventListener("input", previewDeck);
+var statForm = document.getElementById("stat-form");
+statForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    console.log("submit stats");
+});
+// Initializing
+var cardsArray = [];
+for (var id in cards) {
+    cardsArray.push(__assign({ id: id }, cards[id]));
+}
+cardsArray.sort(function (a, b) { return (a.name > b.name ? 1 : -1); });
+function camelCaseToCapitalized(text) {
+    var result = text.replace(/([A-Z])/g, " $1");
+    return result.charAt(0).toUpperCase() + result.slice(1);
+}
+// Card Substitutes
+var tipsDeckPreview = document.getElementById("tips-deck-preview");
+var tipsDeckLink = (document.getElementById("tips-deck-link"));
+var subsContainer = document.getElementById("subs-container");
+var subCardOptions = [];
+var subCardSelects = [];
+var numCardsSubbed = 0;
+var createSubs = function () {
+    var cardIds = tipsDeckLink.value.match(/(\d{8})/g);
+    clearElement(tipsDeckPreview);
+    clearElement(subsContainer);
+    if (cardIds && cardIds.length === 8 && cardIds.every(function (id) { return id in cards; })) {
+        cardIds.forEach(function (id) {
+            var previewCardEl = elementWithClass("img", "preview__card");
+            previewCardEl.src = "../cards/".concat(cards[id].name, ".png");
+            previewCardEl.alt = cards[id].name;
+            tipsDeckPreview.appendChild(previewCardEl);
+            var subContainer = elementWithClass("div", "sub__container");
+            subsContainer.appendChild(subContainer);
+            var cardEl = elementWithClass("img", "sub__card");
+            cardEl.src = "../cards/".concat(cards[id].name, ".png");
+            cardEl.alt = cards[id].name;
+            subContainer.appendChild(cardEl);
+            var subInner = elementWithClass("div", "sub__inner");
+            subContainer.appendChild(subInner);
+            var subOptions = elementWithClass("div", "sub__options");
+            subCardOptions.push(subOptions);
+            var selectCard = (elementWithClass("select", "form__select sub__select"));
+            subCardSelects.push(selectCard);
+            cardsArray.forEach(function (_a) {
+                var id = _a.id, name = _a.name;
+                var option = document.createElement("option");
+                option.setAttribute("value", id);
+                option.setAttribute("label", camelCaseToCapitalized(name));
+                selectCard.appendChild(option);
+            });
+            selectCard.addEventListener("input", function (e) {
+                for (var _i = 0, _a = subOptions.children; _i < _a.length; _i++) {
+                    var subOption = _a[_i];
+                    if (subOption.dataset.id === e.target.value) {
+                        return;
+                    }
+                }
+                if (subOptions.children.length === 0) {
+                    numCardsSubbed += 1;
+                }
+                var cardEl = elementWithClass("img", "sub__option");
+                cardEl.src = "../cards/".concat(cards[e.target.value].name, ".png");
+                cardEl.alt = cards[e.target.value].name;
+                cardEl.setAttribute("data-id", e.target.value);
+                cardEl.addEventListener("click", function () {
+                    cardEl.remove();
+                    selectCard.disabled = false;
+                    if (subOptions.children.length === 0) {
+                        numCardsSubbed -= 1;
+                        for (var i = 0; i < 8; i++) {
+                            if (subCardOptions[i].children.length !== 3) {
+                                subCardSelects[i].disabled = false;
+                            }
+                        }
+                    }
+                });
+                subOptions.appendChild(cardEl);
+                if (numCardsSubbed === 3) {
+                    for (var i = 0; i < 8; i++) {
+                        if (subCardOptions[i].children.length === 0) {
+                            subCardSelects[i].disabled = true;
+                        }
+                    }
+                }
+                if (subOptions.children.length >= 3) {
+                    selectCard.disabled = true;
+                }
+            });
+            subInner.appendChild(selectCard);
+            subInner.appendChild(subOptions);
+        });
+        var checkEl = elementWithClass("div", "check");
+        checkEl.innerHTML = '<i class="fa-solid fa-check"></i>';
+        tipsDeckPreview.appendChild(checkEl);
+    }
+};
+createSubs();
+tipsDeckLink.addEventListener("input", createSubs);
+// Initializing matchups form section
+var matchups = [];
+var sliders = [];
+var sliderLabels = [];
+var _loop_2 = function (i) {
+    var matchup = (document.getElementById("matchup-".concat(i, "-list")));
+    cardsArray.forEach(function (_a) {
+        var id = _a.id, name = _a.name;
+        var option = document.createElement("option");
+        option.setAttribute("value", id);
+        option.setAttribute("label", camelCaseToCapitalized(name));
+        matchup.appendChild(option);
+    });
+    var slider = (document.getElementById("matchup-".concat(i, "-slider")));
+    var label = document.getElementById("matchup-".concat(i, "-lbl"));
+    label.textContent = slider.value + "%";
+    slider.oninput = function (e) {
+        label.textContent = e.target.value + "%";
+    };
+    matchups.push(matchup);
+    sliders.push(slider);
+    sliderLabels.push(label);
+};
+for (var i = 1; i <= 4; i++) {
+    _loop_2(i);
+}
+var tipsForm = document.getElementById("tips-form");
+tipsForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    console.log("submit tips");
+});
 var CR_API_KEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjdjZDUzNGQwLWQwM2YtNDA1OC1iZTliLWUxODMwNjc5MmY3ZSIsImlhdCI6MTY2NjQ1MTkyOSwic3ViIjoiZGV2ZWxvcGVyLzQ0YWNhMWZiLThmMGItMTgxNy00MTc1LTQwMGYzYjU5YWMyMCIsInNjb3BlcyI6WyJyb3lhbGU6KjpyZXBsYXkiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI3NS4xMTguMjEzLjExOSJdLCJ0eXBlIjoiY2xpZW50In1dfQ.zo4x8geAlkqli2uR0wcIzqASxrGuKgM9mc0-KyxZYiLLI7EbE5gMmq9tbbEQjkknpS8KBYpPDpCec8C5PXrJwA";
 /* @ts-ignore */
 var cs = new CSInterface();
+// PAGE INITIALIZATION
+var Page;
+// PAGE INITIALIZATION
+(function (Page) {
+    Page[Page["BATTLE_OVERLAY"] = 0] = "BATTLE_OVERLAY";
+    Page[Page["DECK_STATS"] = 1] = "DECK_STATS";
+    Page[Page["DECK_TIPS"] = 2] = "DECK_TIPS";
+})(Page || (Page = {}));
+var overlayLink = document.getElementById("battle-overlay");
+var overlayPage = document.getElementById("battle-page");
+overlayLink.onclick = function () { return selectPage(Page.BATTLE_OVERLAY); };
+var statsLink = document.getElementById("deck-stats");
+var statsPage = document.getElementById("stats-page");
+statsLink.onclick = function () { return selectPage(Page.DECK_STATS); };
+var tipsLink = document.getElementById("deck-tips");
+var tipsPage = document.getElementById("tips-page");
+tipsLink.onclick = function () { return selectPage(Page.DECK_TIPS); };
+var links = [overlayLink, statsLink, tipsLink];
+var pages = [overlayPage, statsPage, tipsPage];
+function selectPage(target) {
+    for (var i = 0; i < 3; i++) {
+        if (i === target) {
+            links[i].classList.add("selected");
+            pages[i].classList.remove("page__hidden");
+        }
+        else {
+            links[i].classList.remove("selected");
+            pages[i].classList.add("page__hidden");
+        }
+    }
+}
+// BATTLE OVERLAY
 loadBattles("#L008PR8C");
-var form = document.getElementById("player-form");
-form.addEventListener("submit", function (e) {
+var battleForm = document.getElementById("player-form");
+battleForm.addEventListener("submit", function (e) {
     e.preventDefault();
     var input = document.getElementById("playerId");
     loadBattles(input.value);
@@ -860,7 +1065,7 @@ function displayDecks(battlelog) {
     var battlesEl = document.getElementById("battles");
     clearElement(battlesEl);
     var numBattles = battlelog.length;
-    var _loop_1 = function (i) {
+    var _loop_3 = function (i) {
         var battle = battlelog[i];
         var battleEl = elementWithClass("div", "battle__container");
         var detailsEl = elementWithClass("div", "details__container");
@@ -889,26 +1094,72 @@ function displayDecks(battlelog) {
         redEl.appendChild(redTitleEl);
         redEl.appendChild(redSubtitleEl);
         redEl.appendChild(redDeckEl);
-        var btnEl = elementWithClass("button", "battle__action");
-        btnEl.onclick = function () { return battleOverlay(battle.replayTag, battle.team[0].name); };
-        btnEl.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Overlay';
-        battleEl.appendChild(btnEl);
+        var blueDeckLink = "https://link.clashroyale.com/deck/en?deck=";
+        var redDeckLink = "https://link.clashroyale.com/deck/en?deck=";
         for (var j = 0; j < 8; j++) {
             var blueCard = battle.team[0].cards[j];
             var blueCardEl = elementWithClass("img", "deck__card");
             blueCardEl.src = "../cards/".concat(cards[blueCard.id].name, ".png");
             blueCardEl.alt = blueCard.name;
             blueDeckEl.appendChild(blueCardEl);
+            blueDeckLink += blueCard.id;
+            if (j < 7)
+                blueDeckLink += ";";
             var redCard = battle.opponent[0].cards[j];
             var redCardEl = elementWithClass("img", "deck__card");
             redCardEl.src = "../cards/".concat(cards[redCard.id].name, ".png");
             redCardEl.alt = redCard.name;
             redDeckEl.appendChild(redCardEl);
+            redDeckLink += redCard.id;
+            if (j < 7)
+                redDeckLink += ";";
         }
+        var deckActionsEl = elementWithClass("div", "deck-actions__container");
+        battleEl.appendChild(deckActionsEl);
+        var blueDeckActionsEl = elementWithClass("div", "deck-actions");
+        deckActionsEl.appendChild(blueDeckActionsEl);
+        var blueStatBtnEl = elementWithClass("button", "battle__action");
+        blueStatBtnEl.onclick = function () {
+            statDeckLink.value = blueDeckLink;
+            previewDeck();
+            selectPage(Page.DECK_STATS);
+        };
+        blueStatBtnEl.innerHTML = '<i class="fa-solid fa-chart-simple"></i> Stats';
+        blueDeckActionsEl.appendChild(blueStatBtnEl);
+        var blueTipsBtnEl = elementWithClass("button", "battle__action");
+        blueTipsBtnEl.onclick = function () {
+            tipsDeckLink.value = blueDeckLink;
+            createSubs();
+            selectPage(Page.DECK_TIPS);
+        };
+        blueTipsBtnEl.innerHTML = '<i class="fa-solid fa-lightbulb"></i> Tips';
+        blueDeckActionsEl.appendChild(blueTipsBtnEl);
+        var btnEl = elementWithClass("button", "battle__action deck-actions");
+        btnEl.onclick = function () { return battleOverlay(battle.replayTag, battle.team[0].name); };
+        btnEl.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Overlay';
+        deckActionsEl.appendChild(btnEl);
+        var redDeckActionsEl = elementWithClass("div", "deck-actions");
+        deckActionsEl.appendChild(redDeckActionsEl);
+        var redStatBtnEl = elementWithClass("button", "battle__action");
+        redStatBtnEl.onclick = function () {
+            statDeckLink.value = redDeckLink;
+            previewDeck();
+            selectPage(Page.DECK_STATS);
+        };
+        redStatBtnEl.innerHTML = '<i class="fa-solid fa-chart-simple"></i> Stats';
+        redDeckActionsEl.appendChild(redStatBtnEl);
+        var redTipsBtnEl = elementWithClass("button", "battle__action");
+        redTipsBtnEl.onclick = function () {
+            tipsDeckLink.value = redDeckLink;
+            createSubs();
+            selectPage(Page.DECK_TIPS);
+        };
+        redTipsBtnEl.innerHTML = '<i class="fa-solid fa-lightbulb"></i> Tips';
+        redDeckActionsEl.appendChild(redTipsBtnEl);
         battlesEl.appendChild(battleEl);
     };
     for (var i = 0; i < numBattles; i++) {
-        _loop_1(i);
+        _loop_3(i);
     }
 }
 function displayError(error) {

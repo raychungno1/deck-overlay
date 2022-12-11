@@ -32,11 +32,11 @@ $.deckOverlay = {
         // Adding BG & Average Elixir
         seq.videoTracks[0].overwriteClip(deckBoard, 0);
         setImageLength(seq.videoTracks[0].clips[0], battleLength);
-        var blueAvg = "blue-".concat(blueAvgElixir * 10, ".png");
+        var blueAvg = "blue-".concat(blueAvgElixir, ".png");
         var blueAvgImg = findShallow(blueAvg, avgBlueBin);
         seq.videoTracks[1].overwriteClip(blueAvgImg, 0);
         setImageLength(seq.videoTracks[1].clips[0], battleLength);
-        var redAvg = "red-".concat(redAvgElixir * 10, ".png");
+        var redAvg = "red-".concat(redAvgElixir, ".png");
         var redAvgImg = findShallow(redAvg, avgRedBin);
         seq.videoTracks[2].overwriteClip(redAvgImg, 0);
         setImageLength(seq.videoTracks[2].clips[0], battleLength);
@@ -52,7 +52,6 @@ $.deckOverlay = {
             i += 1;
         }
         // Adding Red Cards
-        i = 0;
         var white = {
             5: findShallow("whiteCommon.png", cardsBin),
             3.75: findShallow("whiteRare.png", cardsBin),
@@ -60,6 +59,7 @@ $.deckOverlay = {
             1.25: findShallow("whiteLegendary.png", cardsBin),
             0: findShallow("whiteHero.png", cardsBin)
         };
+        i = 0;
         for (var key in redDeck) {
             var track = seq.videoTracks[i * 2 + 11];
             track.overwriteClip(findShallow("empty.png", cardsBin), 0);
