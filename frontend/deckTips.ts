@@ -1,59 +1,51 @@
-// Initializing
-const cardsArray = [];
-for (const id in cards) {
-  cardsArray.push({ id, ...cards[id] });
+function setTipsLink(link: string) {
+  tipsDeckLink.value = link;
+  deckPreview(tipsDeckLink, "tips-deck-preview");
+  createSubs();
+  selectPage(Page.DECK_TIPS);
 }
-cardsArray.sort((a, b) => (a.name > b.name ? 1 : -1));
 
-function camelCaseToCapitalized(text: string): string {
-  const result = text.replace(/([A-Z])/g, " $1");
-  return result.charAt(0).toUpperCase() + result.slice(1);
-}
+// Deck link preview (tips page)
+const tipsDeckLink = document.getElementById(
+  "tips-deck-link"
+) as HTMLInputElement;
+deckPreview(tipsDeckLink, "tips-deck-preview");
+tipsDeckLink.addEventListener("input", () =>
+  deckPreview(tipsDeckLink, "tips-deck-preview")
+);
 
 // Card Substitutes
-const tipsDeckPreview = document.getElementById("tips-deck-preview");
-const tipsDeckLink = <HTMLInputElement>(
-  document.getElementById("tips-deck-link")
-);
 const subsContainer = document.getElementById("subs-container");
 const subCardOptions = [];
 const subCardSelects = [];
 let numCardsSubbed = 0;
 const createSubs = () => {
   const cardIds = tipsDeckLink.value.match(/(\d{8})/g);
-  clearElement(tipsDeckPreview);
   clearElement(subsContainer);
-  if (cardIds && cardIds.length === 8 && cardIds.every((id) => id in cards)) {
+  if (cardIds && cardIds.length === 8 && cardIds.every((id) => id in CARDS)) {
     cardIds.forEach((id) => {
-      const previewCardEl = elementWithClass("img", "preview__card");
-      previewCardEl.src = `../cards/${cards[id].name}.png`;
-      previewCardEl.alt = cards[id].name;
-      tipsDeckPreview.appendChild(previewCardEl);
-
-      const subContainer = elementWithClass("div", "sub__container");
+      const subContainer = createElement("div", { class: "sub__container" });
       subsContainer.appendChild(subContainer);
 
-      const cardEl = elementWithClass("img", "sub__card");
-      cardEl.src = `../cards/${cards[id].name}.png`;
-      cardEl.alt = cards[id].name;
+      const cardEl = createElement("img", { class: "sub__card" });
+      cardEl.src = `../cards/${CARDS[id].name}.png`;
+      cardEl.alt = CARDS[id].name;
       subContainer.appendChild(cardEl);
 
-      const subInner = elementWithClass("div", "sub__inner");
+      const subInner = createElement("div", { class: "sub__inner" });
       subContainer.appendChild(subInner);
 
-      const subOptions = elementWithClass("div", "sub__options");
+      const subOptions = createElement("div", { class: "sub__options" });
       subCardOptions.push(subOptions);
-      const selectCard = <HTMLInputElement>(
-        elementWithClass("select", "form__select sub__select")
-      );
-      subCardSelects.push(selectCard);
-      cardsArray.forEach(({ id, name }) => {
-        const option = document.createElement("option");
-        option.setAttribute("value", id);
-        option.setAttribute("label", camelCaseToCapitalized(name));
-        selectCard.appendChild(option);
-      });
-      selectCard.addEventListener("input", (e: any) => {
+
+      const selector = createElement("select", {
+        class: "form__select sub__select",
+        id: `sub-options-${id}`,
+      }) as HTMLInputElement;
+      selectCardsAlphabetic(selector);
+      subCardSelects.push(selector);
+
+      selector.addEventListener("input", (e: any) => {
         for (const subOption of subOptions.children) {
           if (subOption.dataset.id === e.target.value) {
             return;
@@ -64,13 +56,13 @@ const createSubs = () => {
           numCardsSubbed += 1;
         }
 
-        const cardEl = elementWithClass("img", "sub__option");
-        cardEl.src = `../cards/${cards[e.target.value].name}.png`;
-        cardEl.alt = cards[e.target.value].name;
+        const cardEl = createElement("img", { class: "sub__option" });
+        cardEl.src = `../cards/${CARDS[e.target.value].name}.png`;
+        cardEl.alt = CARDS[e.target.value].name;
         cardEl.setAttribute("data-id", e.target.value);
         cardEl.addEventListener("click", () => {
           cardEl.remove();
-          selectCard.disabled = false;
+          selector.disabled = false;
           if (subOptions.children.length === 0) {
             numCardsSubbed -= 1;
             for (let i = 0; i < 8; i++) {
@@ -90,47 +82,26 @@ const createSubs = () => {
           }
         }
         if (subOptions.children.length >= 3) {
-          selectCard.disabled = true;
+          selector.disabled = true;
         }
       });
-      subInner.appendChild(selectCard);
+      subInner.appendChild(selector);
       subInner.appendChild(subOptions);
     });
-    const checkEl = elementWithClass("div", "check");
-    checkEl.innerHTML = '<i class="fa-solid fa-check"></i>';
-    tipsDeckPreview.appendChild(checkEl);
   }
 };
 createSubs();
 tipsDeckLink.addEventListener("input", createSubs);
 
-// Initializing matchups form section
+// Matchups section
 const matchups = [];
 const sliders = [];
-const sliderLabels = [];
 for (let i = 1; i <= 4; i++) {
-  const matchup = <HTMLInputElement>(
-    document.getElementById(`matchup-${i}-list`)
-  );
-  cardsArray.forEach(({ id, name }) => {
-    const option = document.createElement("option");
-    option.setAttribute("value", id);
-    option.setAttribute("label", camelCaseToCapitalized(name));
-    matchup.appendChild(option);
-  });
-  const slider = <HTMLInputElement>(
-    document.getElementById(`matchup-${i}-slider`)
-  );
-  const label = document.getElementById(`matchup-${i}-lbl`);
-  label.textContent = slider.value + "%";
-  slider.oninput = function (e: any) {
-    label.textContent = e.target.value + "%";
-  };
-  matchups.push(matchup);
-  sliders.push(slider);
-  sliderLabels.push(label);
+  matchups.push(selectCardsAlphabetic(`matchup-${i}-list`));
+  sliders.push(sliderWithLabel(`matchup-${i}-slider`, `matchup-${i}-lbl`, "%"));
 }
 
+// Submit tips
 const tipsForm = document.getElementById("tips-form");
 tipsForm.addEventListener("submit", (e) => {
   e.preventDefault();

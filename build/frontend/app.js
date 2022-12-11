@@ -34,6 +34,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -110,7 +121,7 @@ var RARE = 3.75;
 var EPIC = 2.5;
 var LEGENDARY = 1.25;
 var HERO = 0;
-var cards = {
+var CARDS = {
     26000077: {
         name: "monk",
         cost: 4,
@@ -766,106 +777,92 @@ var cards = {
         dsName: "RoyalDelivery"
     }
 };
-var stats = ["attack", "defense", "vers", "synergy"];
-var _loop_1 = function (stat) {
-    var slider = document.getElementById("stat-".concat(stat));
-    var label = document.getElementById("stat-".concat(stat, "-lbl"));
-    label.textContent = slider.value;
-    slider.oninput = function (e) {
-        label.textContent = e.target.value;
-    };
-};
-for (var _i = 0, stats_1 = stats; _i < stats_1.length; _i++) {
-    var stat = stats_1[_i];
-    _loop_1(stat);
+function setStatLink(link) {
+    statDeckLink.value = link;
+    deckPreview(statDeckLink, "stat-deck-preview");
+    selectPage(Page.DECK_STATS);
 }
-var statDeckPreview = document.getElementById("stat-deck-preview");
-var statDeckLink = (document.getElementById("stat-deck-link"));
-var previewDeck = function () {
-    var cardIds = statDeckLink.value.match(/(\d{8})/g);
-    clearElement(statDeckPreview);
-    if (cardIds && cardIds.length === 8 && cardIds.every(function (id) { return id in cards; })) {
-        cardIds.forEach(function (id) {
-            var previewCardEl = elementWithClass("img", "preview__card");
-            previewCardEl.src = "../cards/".concat(cards[id].name, ".png");
-            previewCardEl.alt = cards[id].name;
-            statDeckPreview.appendChild(previewCardEl);
-        });
-        var checkEl = elementWithClass("div", "check");
-        checkEl.innerHTML = '<i class="fa-solid fa-check"></i>';
-        statDeckPreview.appendChild(checkEl);
-    }
-};
-previewDeck();
-statDeckLink.addEventListener("input", previewDeck);
+// Deck link preview (stats page)
+var statDeckLink = document.getElementById("stat-deck-link");
+deckPreview(statDeckLink, "stat-deck-preview");
+statDeckLink.addEventListener("input", function () {
+    return deckPreview(statDeckLink, "stat-deck-preview");
+});
+// Initialize sliders
+["attack", "defense", "vers", "synergy"].forEach(function (stat) {
+    sliderWithLabel("stat-".concat(stat), "stat-".concat(stat, "-lbl"));
+});
+// Submit stat
 var statForm = document.getElementById("stat-form");
 statForm.addEventListener("submit", function (e) {
     e.preventDefault();
     console.log("submit stats");
 });
-// Initializing
-var cardsArray = [];
-for (var id in cards) {
-    cardsArray.push(__assign({ id: id }, cards[id]));
+function setTipsLink(link) {
+    tipsDeckLink.value = link;
+    deckPreview(tipsDeckLink, "tips-deck-preview");
+    createSubs();
+    selectPage(Page.DECK_TIPS);
 }
-cardsArray.sort(function (a, b) { return (a.name > b.name ? 1 : -1); });
-function camelCaseToCapitalized(text) {
-    var result = text.replace(/([A-Z])/g, " $1");
-    return result.charAt(0).toUpperCase() + result.slice(1);
-}
+// Deck link preview (tips page)
+var tipsDeckLink = document.getElementById("tips-deck-link");
+deckPreview(tipsDeckLink, "tips-deck-preview");
+tipsDeckLink.addEventListener("input", function () {
+    return deckPreview(tipsDeckLink, "tips-deck-preview");
+});
 // Card Substitutes
-var tipsDeckPreview = document.getElementById("tips-deck-preview");
-var tipsDeckLink = (document.getElementById("tips-deck-link"));
 var subsContainer = document.getElementById("subs-container");
 var subCardOptions = [];
 var subCardSelects = [];
 var numCardsSubbed = 0;
 var createSubs = function () {
     var cardIds = tipsDeckLink.value.match(/(\d{8})/g);
-    clearElement(tipsDeckPreview);
     clearElement(subsContainer);
-    if (cardIds && cardIds.length === 8 && cardIds.every(function (id) { return id in cards; })) {
+    if (cardIds && cardIds.length === 8 && cardIds.every(function (id) { return id in CARDS; })) {
         cardIds.forEach(function (id) {
-            var previewCardEl = elementWithClass("img", "preview__card");
-            previewCardEl.src = "../cards/".concat(cards[id].name, ".png");
-            previewCardEl.alt = cards[id].name;
-            tipsDeckPreview.appendChild(previewCardEl);
-            var subContainer = elementWithClass("div", "sub__container");
+            var subContainer = createElement("div", { "class": "sub__container" });
             subsContainer.appendChild(subContainer);
-            var cardEl = elementWithClass("img", "sub__card");
-            cardEl.src = "../cards/".concat(cards[id].name, ".png");
-            cardEl.alt = cards[id].name;
+            var cardEl = createElement("img", { "class": "sub__card" });
+            cardEl.src = "../cards/".concat(CARDS[id].name, ".png");
+            cardEl.alt = CARDS[id].name;
             subContainer.appendChild(cardEl);
-            var subInner = elementWithClass("div", "sub__inner");
+            var subInner = createElement("div", { "class": "sub__inner" });
             subContainer.appendChild(subInner);
-            var subOptions = elementWithClass("div", "sub__options");
+            var subOptions = createElement("div", { "class": "sub__options" });
             subCardOptions.push(subOptions);
-            var selectCard = (elementWithClass("select", "form__select sub__select"));
-            subCardSelects.push(selectCard);
-            cardsArray.forEach(function (_a) {
-                var id = _a.id, name = _a.name;
-                var option = document.createElement("option");
-                option.setAttribute("value", id);
-                option.setAttribute("label", camelCaseToCapitalized(name));
-                selectCard.appendChild(option);
+            var selector = createElement("select", {
+                "class": "form__select sub__select",
+                id: "sub-options-".concat(id)
             });
-            selectCard.addEventListener("input", function (e) {
-                for (var _i = 0, _a = subOptions.children; _i < _a.length; _i++) {
-                    var subOption = _a[_i];
-                    if (subOption.dataset.id === e.target.value) {
-                        return;
+            selectCardsAlphabetic(selector);
+            subCardSelects.push(selector);
+            selector.addEventListener("input", function (e) {
+                var e_3, _a;
+                try {
+                    for (var _b = __values(subOptions.children), _c = _b.next(); !_c.done; _c = _b.next()) {
+                        var subOption = _c.value;
+                        if (subOption.dataset.id === e.target.value) {
+                            return;
+                        }
                     }
+                }
+                catch (e_3_1) { e_3 = { error: e_3_1 }; }
+                finally {
+                    try {
+                        if (_c && !_c.done && (_a = _b["return"])) _a.call(_b);
+                    }
+                    finally { if (e_3) throw e_3.error; }
                 }
                 if (subOptions.children.length === 0) {
                     numCardsSubbed += 1;
                 }
-                var cardEl = elementWithClass("img", "sub__option");
-                cardEl.src = "../cards/".concat(cards[e.target.value].name, ".png");
-                cardEl.alt = cards[e.target.value].name;
+                var cardEl = createElement("img", { "class": "sub__option" });
+                cardEl.src = "../cards/".concat(CARDS[e.target.value].name, ".png");
+                cardEl.alt = CARDS[e.target.value].name;
                 cardEl.setAttribute("data-id", e.target.value);
                 cardEl.addEventListener("click", function () {
                     cardEl.remove();
-                    selectCard.disabled = false;
+                    selector.disabled = false;
                     if (subOptions.children.length === 0) {
                         numCardsSubbed -= 1;
                         for (var i = 0; i < 8; i++) {
@@ -884,84 +881,124 @@ var createSubs = function () {
                     }
                 }
                 if (subOptions.children.length >= 3) {
-                    selectCard.disabled = true;
+                    selector.disabled = true;
                 }
             });
-            subInner.appendChild(selectCard);
+            subInner.appendChild(selector);
             subInner.appendChild(subOptions);
         });
-        var checkEl = elementWithClass("div", "check");
-        checkEl.innerHTML = '<i class="fa-solid fa-check"></i>';
-        tipsDeckPreview.appendChild(checkEl);
     }
 };
 createSubs();
 tipsDeckLink.addEventListener("input", createSubs);
-// Initializing matchups form section
+// Matchups section
 var matchups = [];
 var sliders = [];
-var sliderLabels = [];
-var _loop_2 = function (i) {
-    var matchup = (document.getElementById("matchup-".concat(i, "-list")));
-    cardsArray.forEach(function (_a) {
-        var id = _a.id, name = _a.name;
-        var option = document.createElement("option");
-        option.setAttribute("value", id);
-        option.setAttribute("label", camelCaseToCapitalized(name));
-        matchup.appendChild(option);
-    });
-    var slider = (document.getElementById("matchup-".concat(i, "-slider")));
-    var label = document.getElementById("matchup-".concat(i, "-lbl"));
-    label.textContent = slider.value + "%";
-    slider.oninput = function (e) {
-        label.textContent = e.target.value + "%";
-    };
-    matchups.push(matchup);
-    sliders.push(slider);
-    sliderLabels.push(label);
-};
 for (var i = 1; i <= 4; i++) {
-    _loop_2(i);
+    matchups.push(selectCardsAlphabetic("matchup-".concat(i, "-list")));
+    sliders.push(sliderWithLabel("matchup-".concat(i, "-slider"), "matchup-".concat(i, "-lbl"), "%"));
 }
+// Submit tips
 var tipsForm = document.getElementById("tips-form");
 tipsForm.addEventListener("submit", function (e) {
     e.preventDefault();
     console.log("submit tips");
 });
 var CR_API_KEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjdjZDUzNGQwLWQwM2YtNDA1OC1iZTliLWUxODMwNjc5MmY3ZSIsImlhdCI6MTY2NjQ1MTkyOSwic3ViIjoiZGV2ZWxvcGVyLzQ0YWNhMWZiLThmMGItMTgxNy00MTc1LTQwMGYzYjU5YWMyMCIsInNjb3BlcyI6WyJyb3lhbGU6KjpyZXBsYXkiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI3NS4xMTguMjEzLjExOSJdLCJ0eXBlIjoiY2xpZW50In1dfQ.zo4x8geAlkqli2uR0wcIzqASxrGuKgM9mc0-KyxZYiLLI7EbE5gMmq9tbbEQjkknpS8KBYpPDpCec8C5PXrJwA";
-/* @ts-ignore */
-var cs = new CSInterface();
-// PAGE INITIALIZATION
-var Page;
-// PAGE INITIALIZATION
-(function (Page) {
-    Page[Page["BATTLE_OVERLAY"] = 0] = "BATTLE_OVERLAY";
-    Page[Page["DECK_STATS"] = 1] = "DECK_STATS";
-    Page[Page["DECK_TIPS"] = 2] = "DECK_TIPS";
-})(Page || (Page = {}));
-var overlayLink = document.getElementById("battle-overlay");
-var overlayPage = document.getElementById("battle-page");
-overlayLink.onclick = function () { return selectPage(Page.BATTLE_OVERLAY); };
-var statsLink = document.getElementById("deck-stats");
-var statsPage = document.getElementById("stats-page");
-statsLink.onclick = function () { return selectPage(Page.DECK_STATS); };
-var tipsLink = document.getElementById("deck-tips");
-var tipsPage = document.getElementById("tips-page");
-tipsLink.onclick = function () { return selectPage(Page.DECK_TIPS); };
-var links = [overlayLink, statsLink, tipsLink];
-var pages = [overlayPage, statsPage, tipsPage];
-function selectPage(target) {
-    for (var i = 0; i < 3; i++) {
-        if (i === target) {
-            links[i].classList.add("selected");
-            pages[i].classList.remove("page__hidden");
-        }
-        else {
-            links[i].classList.remove("selected");
-            pages[i].classList.add("page__hidden");
-        }
+/**
+ * Creates the HTML element specified by type, with certain attributes
+ * @param type        the type of HTML element
+ * @param attributes  a dictionary of attribute-value pairs
+ * @returns           the HTMLElement object
+ */
+function createElement(type, attributes) {
+    var el = document.createElement(type);
+    Object.keys(attributes).forEach(function (attr) {
+        return el.setAttribute(attr, attributes[attr]);
+    });
+    return el;
+}
+/**
+ * Clears all children from an HTML element
+ * @param el an HTMLElement object
+ */
+function clearElement(el) {
+    while (el.firstChild) {
+        el.removeChild(el.firstChild);
     }
 }
+/**
+ * Gets an HTML element by reference or id
+ * @param idOrEl either the select element or its id
+ * @returns an HTMLElement object
+ */
+function getElement(idOrEl) {
+    return typeof idOrEl === "string"
+        ? document.getElementById(idOrEl)
+        : idOrEl;
+}
+/**
+ * Links a range slider with a label to display its current value. Slider and label must be in the DOM with an id.
+ * @param sliderId  the id of the slider element
+ * @param labelId   the label of the slider element
+ * @param end       a string to append at the end of the label
+ */
+function sliderWithLabel(sliderId, labelId, end) {
+    var slider = document.getElementById(sliderId);
+    var label = document.getElementById(labelId);
+    label.textContent = slider.value + (end || "");
+    slider.oninput = function (e) {
+        label.textContent = e.target.value + (end || "");
+    };
+    return slider;
+}
+/**
+ * Transforms a camel case string to capetalized title text
+ * @param text a camel case formatted string
+ * @returns a capitalized formatted string
+ */
+function camelCaseToCapitalized(text) {
+    var result = text.replace(/([A-Z])/g, " $1");
+    return result.charAt(0).toUpperCase() + result.slice(1);
+}
+/**
+ * Fills a select element with cards in alphabetical order
+ * @param selectOrId either the select element or its id
+ */
+function selectCardsAlphabetic(idOrSelect) {
+    var select = getElement(idOrSelect);
+    var cardsArray = Object.keys(CARDS).map(function (id) { return (__assign({ id: id }, CARDS[id])); });
+    cardsArray.sort(function (a, b) { return (a.name > b.name ? 1 : -1); });
+    cardsArray.forEach(function (_a) {
+        var id = _a.id, name = _a.name;
+        var option = document.createElement("option");
+        option.setAttribute("value", id);
+        option.setAttribute("label", camelCaseToCapitalized(name));
+        select.appendChild(option);
+    });
+    return select;
+}
+function deckPreview(idOrInput, idOrPreview) {
+    var inputEl = getElement(idOrInput);
+    var previewEl = getElement(idOrPreview);
+    clearElement(previewEl);
+    var cardIds = inputEl.value.match(/(\d{8})/g);
+    if (cardIds && cardIds.length === 8 && cardIds.every(function (id) { return id in CARDS; })) {
+        cardIds.forEach(function (id) {
+            var previewCardEl = createElement("img", {
+                "class": "preview__card"
+            });
+            previewCardEl.src = "../cards/".concat(CARDS[id].name, ".png");
+            previewCardEl.alt = CARDS[id].name;
+            previewEl.appendChild(previewCardEl);
+        });
+        var checkEl = createElement("div", { "class": "check" });
+        checkEl.innerHTML = '<i class="fa-solid fa-check"></i>';
+        previewEl.appendChild(checkEl);
+    }
+}
+/* @ts-ignore */ // Object to interact with primere
+var cs = new CSInterface();
 // BATTLE OVERLAY
 loadBattles("#L008PR8C");
 var battleForm = document.getElementById("player-form");
@@ -972,7 +1009,7 @@ battleForm.addEventListener("submit", function (e) {
 });
 function loadBattles(playerId) {
     return __awaiter(this, void 0, void 0, function () {
-        var log, e_3;
+        var log, e_4;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -983,8 +1020,8 @@ function loadBattles(playerId) {
                     displayDecks(log);
                     return [3 /*break*/, 3];
                 case 2:
-                    e_3 = _a.sent();
-                    displayError(e_3);
+                    e_4 = _a.sent();
+                    displayError(e_4);
                     return [3 /*break*/, 3];
                 case 3: return [2 /*return*/];
             }
@@ -995,7 +1032,7 @@ function battleOverlay(replayTag, playerName) {
     if (replayTag === void 0) { replayTag = ""; }
     if (playerName === void 0) { playerName = ""; }
     return __awaiter(this, void 0, void 0, function () {
-        var replay, battle, battleLength, flip, blueDeck, redDeck, offset, i, blueId, redId, blueAvgElixir, redAvgElixir, redInit, redPlayerId, commands, i, _a, time, id, playerId, e_4;
+        var replay, battle, battleLength, flip, blueDeck, redDeck, offset, i, blueId, redId, blueAvgElixir, redAvgElixir, redInit, redPlayerId, commands, i, _a, time, id, playerId, e_5;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -1012,8 +1049,8 @@ function battleOverlay(replayTag, playerName) {
                     for (i = 0; i < 8; i++) {
                         blueId = battle["deck".concat(offset)][i].d;
                         redId = battle["deck".concat(1 - offset)][i].d;
-                        blueDeck[blueId] = cards[blueId];
-                        redDeck[redId] = cards[redId];
+                        blueDeck[blueId] = CARDS[blueId];
+                        redDeck[redId] = CARDS[redId];
                     }
                     blueAvgElixir = averageElixir(blueDeck);
                     redAvgElixir = averageElixir(redDeck);
@@ -1035,7 +1072,7 @@ function battleOverlay(replayTag, playerName) {
                     cs.evalScript("$.deckOverlay.battle()");
                     return [3 /*break*/, 3];
                 case 2:
-                    e_4 = _b.sent();
+                    e_5 = _b.sent();
                     return [3 /*break*/, 3];
                 case 3: return [2 /*return*/];
             }
@@ -1049,47 +1086,37 @@ function averageElixir(deck) {
     }
     return Math.round((total * 10) / 8);
 }
-function elementWithClass(type, className) {
-    var element = document.createElement(type);
-    element.className = className;
-    return element;
-}
-function clearElement(el) {
-    while (el.firstChild) {
-        el.removeChild(el.firstChild);
-    }
-}
 function displayDecks(battlelog) {
     if (!battlelog || !battlelog.length)
         return displayError("Error: No Battles Found");
     var battlesEl = document.getElementById("battles");
     clearElement(battlesEl);
     var numBattles = battlelog.length;
-    var _loop_3 = function (i) {
+    var _loop_1 = function (i) {
         var battle = battlelog[i];
-        var battleEl = elementWithClass("div", "battle__container");
-        var detailsEl = elementWithClass("div", "details__container");
+        var battleEl = createElement("div", { "class": "battle__container" });
+        var detailsEl = createElement("div", { "class": "details__container" });
         battleEl.appendChild(detailsEl);
-        var blueEl = elementWithClass("div", "blue__container");
-        var blueTitleEl = elementWithClass("p", "title");
+        var blueEl = createElement("div", { "class": "blue__container" });
+        var blueTitleEl = createElement("p", { "class": "title" });
         blueTitleEl.textContent = "".concat(battle.team[0].name);
-        var blueSubtitleEl = elementWithClass("p", "subtitle");
+        var blueSubtitleEl = createElement("p", { "class": "subtitle" });
         blueSubtitleEl.textContent = battle.team[0].clan
             ? "".concat(battle.team[0].clan.name)
             : "-";
-        var blueDeckEl = elementWithClass("div", "deck");
+        var blueDeckEl = createElement("div", { "class": "deck" });
         detailsEl.appendChild(blueEl);
         blueEl.appendChild(blueTitleEl);
         blueEl.appendChild(blueSubtitleEl);
         blueEl.appendChild(blueDeckEl);
-        var redEl = elementWithClass("div", "red__container");
-        var redTitleEl = elementWithClass("p", "title");
+        var redEl = createElement("div", { "class": "red__container" });
+        var redTitleEl = createElement("p", { "class": "title" });
         redTitleEl.textContent = "".concat(battle.opponent[0].name);
-        var redSubtitleEl = elementWithClass("p", "subtitle");
+        var redSubtitleEl = createElement("p", { "class": "subtitle" });
         redSubtitleEl.textContent = battle.opponent[0].clan
             ? "".concat(battle.opponent[0].clan.name)
             : "-";
-        var redDeckEl = elementWithClass("div", "deck");
+        var redDeckEl = createElement("div", { "class": "deck" });
         detailsEl.appendChild(redEl);
         redEl.appendChild(redTitleEl);
         redEl.appendChild(redSubtitleEl);
@@ -1098,81 +1125,107 @@ function displayDecks(battlelog) {
         var redDeckLink = "https://link.clashroyale.com/deck/en?deck=";
         for (var j = 0; j < 8; j++) {
             var blueCard = battle.team[0].cards[j];
-            var blueCardEl = elementWithClass("img", "deck__card");
-            blueCardEl.src = "../cards/".concat(cards[blueCard.id].name, ".png");
+            var blueCardEl = createElement("img", { "class": "deck__card" });
+            blueCardEl.src = "../cards/".concat(CARDS[blueCard.id].name, ".png");
             blueCardEl.alt = blueCard.name;
             blueDeckEl.appendChild(blueCardEl);
             blueDeckLink += blueCard.id;
             if (j < 7)
                 blueDeckLink += ";";
             var redCard = battle.opponent[0].cards[j];
-            var redCardEl = elementWithClass("img", "deck__card");
-            redCardEl.src = "../cards/".concat(cards[redCard.id].name, ".png");
+            var redCardEl = createElement("img", { "class": "deck__card" });
+            redCardEl.src = "../cards/".concat(CARDS[redCard.id].name, ".png");
             redCardEl.alt = redCard.name;
             redDeckEl.appendChild(redCardEl);
             redDeckLink += redCard.id;
             if (j < 7)
                 redDeckLink += ";";
         }
-        var deckActionsEl = elementWithClass("div", "deck-actions__container");
+        var deckActionsEl = createElement("div", {
+            "class": "deck-actions__container"
+        });
         battleEl.appendChild(deckActionsEl);
-        var blueDeckActionsEl = elementWithClass("div", "deck-actions");
+        var blueDeckActionsEl = createElement("div", { "class": "deck-actions" });
         deckActionsEl.appendChild(blueDeckActionsEl);
-        var blueStatBtnEl = elementWithClass("button", "battle__action");
-        blueStatBtnEl.onclick = function () {
-            statDeckLink.value = blueDeckLink;
-            previewDeck();
-            selectPage(Page.DECK_STATS);
-        };
+        var blueStatBtnEl = createElement("button", { "class": "battle__action" });
+        blueStatBtnEl.onclick = function () { return setStatLink(blueDeckLink); };
         blueStatBtnEl.innerHTML = '<i class="fa-solid fa-chart-simple"></i> Stats';
         blueDeckActionsEl.appendChild(blueStatBtnEl);
-        var blueTipsBtnEl = elementWithClass("button", "battle__action");
-        blueTipsBtnEl.onclick = function () {
-            tipsDeckLink.value = blueDeckLink;
-            createSubs();
-            selectPage(Page.DECK_TIPS);
-        };
+        var blueTipsBtnEl = createElement("button", { "class": "battle__action" });
+        blueTipsBtnEl.onclick = function () { return setTipsLink(blueDeckLink); };
         blueTipsBtnEl.innerHTML = '<i class="fa-solid fa-lightbulb"></i> Tips';
         blueDeckActionsEl.appendChild(blueTipsBtnEl);
-        var btnEl = elementWithClass("button", "battle__action deck-actions");
+        var btnEl = createElement("button", {
+            "class": "battle__action deck-actions"
+        });
         btnEl.onclick = function () { return battleOverlay(battle.replayTag, battle.team[0].name); };
         btnEl.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Overlay';
         deckActionsEl.appendChild(btnEl);
-        var redDeckActionsEl = elementWithClass("div", "deck-actions");
+        var redDeckActionsEl = createElement("div", { "class": "deck-actions" });
         deckActionsEl.appendChild(redDeckActionsEl);
-        var redStatBtnEl = elementWithClass("button", "battle__action");
-        redStatBtnEl.onclick = function () {
-            statDeckLink.value = redDeckLink;
-            previewDeck();
-            selectPage(Page.DECK_STATS);
-        };
+        var redStatBtnEl = createElement("button", { "class": "battle__action" });
+        redStatBtnEl.onclick = function () { return setStatLink(redDeckLink); };
         redStatBtnEl.innerHTML = '<i class="fa-solid fa-chart-simple"></i> Stats';
         redDeckActionsEl.appendChild(redStatBtnEl);
-        var redTipsBtnEl = elementWithClass("button", "battle__action");
-        redTipsBtnEl.onclick = function () {
-            tipsDeckLink.value = redDeckLink;
-            createSubs();
-            selectPage(Page.DECK_TIPS);
-        };
+        var redTipsBtnEl = createElement("button", { "class": "battle__action" });
+        redTipsBtnEl.onclick = function () { return setTipsLink(redDeckLink); };
         redTipsBtnEl.innerHTML = '<i class="fa-solid fa-lightbulb"></i> Tips';
         redDeckActionsEl.appendChild(redTipsBtnEl);
         battlesEl.appendChild(battleEl);
     };
     for (var i = 0; i < numBattles; i++) {
-        _loop_3(i);
+        _loop_1(i);
     }
 }
 function displayError(error) {
     var battlesEl = document.getElementById("battles");
     clearElement(battlesEl);
-    var errorEl = elementWithClass("div", "error_container");
-    var errorIconEl = elementWithClass("i", "fa-solid fa-triangle-exclamation error__icon");
-    var errorMsgEl = elementWithClass("p", "error__msg");
+    var errorEl = createElement("div", { "class": "error_container" });
+    var errorIconEl = createElement("i", {
+        "class": "fa-solid fa-triangle-exclamation error__icon"
+    });
+    var errorMsgEl = createElement("p", { "class": "error__msg" });
     errorMsgEl.textContent = error;
     errorEl.appendChild(errorIconEl);
     errorEl.appendChild(errorMsgEl);
     battlesEl.appendChild(errorEl);
 }
+var Page;
+(function (Page) {
+    Page[Page["BATTLE_OVERLAY"] = 0] = "BATTLE_OVERLAY";
+    Page[Page["DECK_STATS"] = 1] = "DECK_STATS";
+    Page[Page["DECK_TIPS"] = 2] = "DECK_TIPS";
+})(Page || (Page = {}));
+/**
+ * Controls the active page on the navbar
+ * @param target The page to switch to
+ */
+var selectPage = (function () {
+    // Load nav links add onclick listeners
+    var links = ["battle-nav", "stats-nav", "tips-nav"].map(function (id, i) {
+        var link = document.getElementById(id);
+        link.onclick = function () { return selectPage(i); };
+        return link;
+    });
+    // Load page containers
+    var pages = ["battle-page", "stats-page", "tips-page"].map(function (id) {
+        return document.getElementById(id);
+    });
+    // Function definition
+    var selectPage = function (target) {
+        for (var i = 0; i < 3; i++) {
+            if (i === target) {
+                links[i].classList.add("selected");
+                pages[i].classList.remove("page__hidden");
+            }
+            else {
+                links[i].classList.remove("selected");
+                pages[i].classList.add("page__hidden");
+            }
+        }
+    };
+    return selectPage;
+})();
 var sampleBattlelog = [
     {
         type: "challenge",
@@ -15817,3 +15870,57 @@ var sampleReplay = {
         content: 15
     }
 };
+var Deck = /** @class */ (function () {
+    /**
+     * Creates a deck from a deck link
+     * @param link  a deck link to parse
+     */
+    function Deck(link) {
+        var ids = link.match(/(\d{8})/g);
+        this.cards = ids.map(function (id) { return (__assign({ id: id }, CARDS[id])); });
+        this._initDeck();
+    }
+    Deck.prototype._initDeck = function () {
+        var e_6, _a;
+        // Sorting cards
+        this.cards.sort(function (a, b) { return (a.cost > b.cost ? 1 : -1); });
+        // Average elixir
+        var total = this.cards.reduce(function (prev, _a) {
+            var cost = _a.cost;
+            return prev + cost;
+        }, 0);
+        this.averageElixir = Math.round((total * 10) / 8);
+        try {
+            // Fastest cycle
+            for (var _b = __values(this.cards), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var card = _c.value;
+                if (this.fastestCycle.length < 4 && card.name !== "mirror") {
+                    this.fastestCycle.push(card);
+                }
+            }
+        }
+        catch (e_6_1) { e_6 = { error: e_6_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b["return"])) _a.call(_b);
+            }
+            finally { if (e_6) throw e_6.error; }
+        }
+    };
+    /**
+     * Verifies a deck link
+     * @param link  a deck link to parse
+     * @returns     true if the deck link is valid, false otherwise
+     */
+    Deck.deckLinkIsValid = function (link) {
+        var ids = link.match(/(\d{8})/g);
+        return ids && ids.length === 8 && ids.every(function (id) { return id in CARDS; });
+    };
+    /**
+     * Returns an iterables of cards in the deck
+     */
+    Deck.prototype[Symbol.iterator] = function () {
+        return this.cards.values();
+    };
+    return Deck;
+}());

@@ -4,7 +4,7 @@ const EPIC = 2.5;
 const LEGENDARY = 1.25;
 const HERO = 0;
 
-const cards: Cards = {
+const CARDS: Cards = {
   26000077: {
     name: "monk",
     cost: 4,

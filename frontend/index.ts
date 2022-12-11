@@ -1,39 +1,5 @@
-/* @ts-ignore */
+/* @ts-ignore */ // Object to interact with primere
 const cs = new CSInterface();
-
-// PAGE INITIALIZATION
-enum Page {
-  BATTLE_OVERLAY,
-  DECK_STATS,
-  DECK_TIPS,
-}
-
-const overlayLink = document.getElementById("battle-overlay");
-const overlayPage = document.getElementById("battle-page");
-overlayLink.onclick = () => selectPage(Page.BATTLE_OVERLAY);
-
-const statsLink = document.getElementById("deck-stats");
-const statsPage = document.getElementById("stats-page");
-statsLink.onclick = () => selectPage(Page.DECK_STATS);
-
-const tipsLink = document.getElementById("deck-tips");
-const tipsPage = document.getElementById("tips-page");
-tipsLink.onclick = () => selectPage(Page.DECK_TIPS);
-
-const links = [overlayLink, statsLink, tipsLink];
-const pages = [overlayPage, statsPage, tipsPage];
-
-function selectPage(target: Page) {
-  for (let i = 0; i < 3; i++) {
-    if (i === target) {
-      links[i].classList.add("selected");
-      pages[i].classList.remove("page__hidden");
-    } else {
-      links[i].classList.remove("selected");
-      pages[i].classList.add("page__hidden");
-    }
-  }
-}
 
 // BATTLE OVERLAY
 loadBattles("#L008PR8C");
@@ -68,8 +34,8 @@ async function battleOverlay(replayTag = "", playerName = "") {
     for (let i = 0; i < 8; i++) {
       const blueId = battle[`deck${offset}`][i].d;
       const redId = battle[`deck${1 - offset}`][i].d;
-      blueDeck[blueId] = cards[blueId];
-      redDeck[redId] = cards[redId];
+      blueDeck[blueId] = CARDS[blueId];
+      redDeck[redId] = CARDS[redId];
     }
     const blueAvgElixir = averageElixir(blueDeck);
     const redAvgElixir = averageElixir(redDeck);
@@ -106,18 +72,6 @@ function averageElixir(deck: Cards) {
   return Math.round((total * 10) / 8);
 }
 
-function elementWithClass(type, className) {
-  const element = document.createElement(type);
-  element.className = className;
-  return element;
-}
-
-function clearElement(el: HTMLElement) {
-  while (el.firstChild) {
-    el.removeChild(el.firstChild);
-  }
-}
-
 function displayDecks(battlelog) {
   if (!battlelog || !battlelog.length)
     return displayError("Error: No Battles Found");
@@ -128,33 +82,33 @@ function displayDecks(battlelog) {
   const numBattles = battlelog.length;
   for (let i = 0; i < numBattles; i++) {
     const battle = battlelog[i];
-    const battleEl = elementWithClass("div", "battle__container");
-    const detailsEl = elementWithClass("div", "details__container");
+    const battleEl = createElement("div", { class: "battle__container" });
+    const detailsEl = createElement("div", { class: "details__container" });
     battleEl.appendChild(detailsEl);
 
-    const blueEl = elementWithClass("div", "blue__container");
-    const blueTitleEl = elementWithClass("p", "title");
+    const blueEl = createElement("div", { class: "blue__container" });
+    const blueTitleEl = createElement("p", { class: "title" });
     blueTitleEl.textContent = `${battle.team[0].name}`;
-    const blueSubtitleEl = elementWithClass("p", "subtitle");
+    const blueSubtitleEl = createElement("p", { class: "subtitle" });
     blueSubtitleEl.textContent = battle.team[0].clan
       ? `${battle.team[0].clan.name}`
       : "-";
 
-    const blueDeckEl = elementWithClass("div", "deck");
+    const blueDeckEl = createElement("div", { class: "deck" });
     detailsEl.appendChild(blueEl);
     blueEl.appendChild(blueTitleEl);
     blueEl.appendChild(blueSubtitleEl);
     blueEl.appendChild(blueDeckEl);
 
-    const redEl = elementWithClass("div", "red__container");
-    const redTitleEl = elementWithClass("p", "title");
+    const redEl = createElement("div", { class: "red__container" });
+    const redTitleEl = createElement("p", { class: "title" });
     redTitleEl.textContent = `${battle.opponent[0].name}`;
-    const redSubtitleEl = elementWithClass("p", "subtitle");
+    const redSubtitleEl = createElement("p", { class: "subtitle" });
     redSubtitleEl.textContent = battle.opponent[0].clan
       ? `${battle.opponent[0].clan.name}`
       : "-";
 
-    const redDeckEl = elementWithClass("div", "deck");
+    const redDeckEl = createElement("div", { class: "deck" });
     detailsEl.appendChild(redEl);
     redEl.appendChild(redTitleEl);
     redEl.appendChild(redSubtitleEl);
@@ -164,69 +118,57 @@ function displayDecks(battlelog) {
     let redDeckLink = "https://link.clashroyale.com/deck/en?deck=";
     for (let j = 0; j < 8; j++) {
       const blueCard = battle.team[0].cards[j];
-      const blueCardEl = elementWithClass("img", "deck__card");
-      blueCardEl.src = `../cards/${cards[blueCard.id].name}.png`;
+      const blueCardEl = createElement("img", { class: "deck__card" });
+      blueCardEl.src = `../cards/${CARDS[blueCard.id].name}.png`;
       blueCardEl.alt = blueCard.name;
       blueDeckEl.appendChild(blueCardEl);
       blueDeckLink += blueCard.id;
       if (j < 7) blueDeckLink += ";";
 
       const redCard = battle.opponent[0].cards[j];
-      const redCardEl = elementWithClass("img", "deck__card");
-      redCardEl.src = `../cards/${cards[redCard.id].name}.png`;
+      const redCardEl = createElement("img", { class: "deck__card" });
+      redCardEl.src = `../cards/${CARDS[redCard.id].name}.png`;
       redCardEl.alt = redCard.name;
       redDeckEl.appendChild(redCardEl);
       redDeckLink += redCard.id;
       if (j < 7) redDeckLink += ";";
     }
 
-    const deckActionsEl = elementWithClass("div", "deck-actions__container");
+    const deckActionsEl = createElement("div", {
+      class: "deck-actions__container",
+    });
     battleEl.appendChild(deckActionsEl);
 
-    const blueDeckActionsEl = elementWithClass("div", "deck-actions");
+    const blueDeckActionsEl = createElement("div", { class: "deck-actions" });
     deckActionsEl.appendChild(blueDeckActionsEl);
 
-    const blueStatBtnEl = elementWithClass("button", "battle__action");
-    blueStatBtnEl.onclick = () => {
-      statDeckLink.value = blueDeckLink;
-      previewDeck();
-      selectPage(Page.DECK_STATS);
-    };
+    const blueStatBtnEl = createElement("button", { class: "battle__action" });
+    blueStatBtnEl.onclick = () => setStatLink(blueDeckLink);
     blueStatBtnEl.innerHTML = '<i class="fa-solid fa-chart-simple"></i> Stats';
     blueDeckActionsEl.appendChild(blueStatBtnEl);
 
-    const blueTipsBtnEl = elementWithClass("button", "battle__action");
-    blueTipsBtnEl.onclick = () => {
-      tipsDeckLink.value = blueDeckLink;
-      createSubs();
-      selectPage(Page.DECK_TIPS);
-    };
+    const blueTipsBtnEl = createElement("button", { class: "battle__action" });
+    blueTipsBtnEl.onclick = () => setTipsLink(blueDeckLink);
     blueTipsBtnEl.innerHTML = '<i class="fa-solid fa-lightbulb"></i> Tips';
     blueDeckActionsEl.appendChild(blueTipsBtnEl);
 
-    const btnEl = elementWithClass("button", "battle__action deck-actions");
+    const btnEl = createElement("button", {
+      class: "battle__action deck-actions",
+    });
     btnEl.onclick = () => battleOverlay(battle.replayTag, battle.team[0].name);
     btnEl.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Overlay';
     deckActionsEl.appendChild(btnEl);
 
-    const redDeckActionsEl = elementWithClass("div", "deck-actions");
+    const redDeckActionsEl = createElement("div", { class: "deck-actions" });
     deckActionsEl.appendChild(redDeckActionsEl);
 
-    const redStatBtnEl = elementWithClass("button", "battle__action");
-    redStatBtnEl.onclick = () => {
-      statDeckLink.value = redDeckLink;
-      previewDeck();
-      selectPage(Page.DECK_STATS);
-    };
+    const redStatBtnEl = createElement("button", { class: "battle__action" });
+    redStatBtnEl.onclick = () => setStatLink(redDeckLink);
     redStatBtnEl.innerHTML = '<i class="fa-solid fa-chart-simple"></i> Stats';
     redDeckActionsEl.appendChild(redStatBtnEl);
 
-    const redTipsBtnEl = elementWithClass("button", "battle__action");
-    redTipsBtnEl.onclick = () => {
-      tipsDeckLink.value = redDeckLink;
-      createSubs();
-      selectPage(Page.DECK_TIPS);
-    };
+    const redTipsBtnEl = createElement("button", { class: "battle__action" });
+    redTipsBtnEl.onclick = () => setTipsLink(redDeckLink);
     redTipsBtnEl.innerHTML = '<i class="fa-solid fa-lightbulb"></i> Tips';
     redDeckActionsEl.appendChild(redTipsBtnEl);
 
@@ -238,12 +180,11 @@ function displayError(error) {
   const battlesEl = document.getElementById("battles");
   clearElement(battlesEl);
 
-  const errorEl = elementWithClass("div", "error_container");
-  const errorIconEl = elementWithClass(
-    "i",
-    "fa-solid fa-triangle-exclamation error__icon"
-  );
-  const errorMsgEl = elementWithClass("p", "error__msg");
+  const errorEl = createElement("div", { class: "error_container" });
+  const errorIconEl = createElement("i", {
+    class: "fa-solid fa-triangle-exclamation error__icon",
+  });
+  const errorMsgEl = createElement("p", { class: "error__msg" });
   errorMsgEl.textContent = error;
 
   errorEl.appendChild(errorIconEl);

@@ -3,5 +3,6 @@
     "lib": ["es5", "es6", "dom"],
     "module": "System",
     "outFile": "../build/frontend/app.js",
+    "downlevelIteration": true
   }
 }
