@@ -1,13 +1,17 @@
 //@include utils.js;
 
-const battleLength = 0;
-const blueDeck = {};
-const blueAvgElixir = 0;
-const redDeck = {};
-const redAvgElixir = 0;
-const redInit = {};
+const overlayStats: any = {};
 
 const battleOverlay = () => {
+  const {
+    battleLength,
+    blueDeck,
+    blueAverageElixir,
+    redDeck,
+    redAverageElixir,
+    redInit,
+  } = overlayStats;
+
   const ROOT_PROJECT = app.project;
   const ROOT_BIN = ROOT_PROJECT.rootItem;
 
@@ -51,14 +55,14 @@ const battleOverlay = () => {
   // Adding blue average elixir
   addItemToTrack({
     track: seq.videoTracks[1],
-    item: findShallow(`blue-${blueAvgElixir}.png`, AVG_BLUE_BIN),
+    item: findShallow(`blue-${blueAverageElixir}.png`, AVG_BLUE_BIN),
     endSeconds: battleLength,
   });
 
   // Adding red average elixir
   addItemToTrack({
     track: seq.videoTracks[2],
-    item: findShallow(`red-${redAvgElixir}.png`, AVG_RED_BIN),
+    item: findShallow(`red-${redAverageElixir}.png`, AVG_RED_BIN),
     endSeconds: battleLength,
   });
 
@@ -80,7 +84,7 @@ const battleOverlay = () => {
   for (let cardId in redDeck) {
     const cardTrack = seq.videoTracks[i * 2 + 11];
     const highlightTrack = seq.videoTracks[i * 2 + 12];
-    const cardPosition = [(95 + 117.5 * i) / WIDTH, 70 / HEIGHT]
+    const cardPosition = [(95 + 117.5 * i) / WIDTH, 70 / HEIGHT];
 
     // If card was never played, empty card full duration
     if (!(cardId in redInit)) {

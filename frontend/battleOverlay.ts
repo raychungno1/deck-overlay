@@ -159,7 +159,6 @@ async function battleOverlay(replayTag = "", playerName = "") {
   try {
     const replay = await getReplay(replayTag);
     const battle = replay.replayData.battle;
-    const battleLength = replay.replayData.endTick / 20;
     const flip = battle.avatar0.name !== playerName;
 
     // Parsing Deck Cards
@@ -172,8 +171,6 @@ async function battleOverlay(replayTag = "", playerName = "") {
       blueDeck[blueId] = CARDS[blueId];
       redDeck[redId] = CARDS[redId];
     }
-    const blueAvgElixir = averageElixir(blueDeck);
-    const redAvgElixir = averageElixir(redDeck);
 
     // Parsing First Time Each Red Card Was Played
     const redInit = {};
@@ -189,12 +186,15 @@ async function battleOverlay(replayTag = "", playerName = "") {
       }
     }
 
-    cs.evalScript(`var battleLength = ${JSON.stringify(battleLength)}`);
-    cs.evalScript(`var blueDeck = ${JSON.stringify(blueDeck)}`);
-    cs.evalScript(`var blueAvgElixir = ${JSON.stringify(blueAvgElixir)}`);
-    cs.evalScript(`var redDeck = ${JSON.stringify(redDeck)}`);
-    cs.evalScript(`var redAvgElixir = ${JSON.stringify(redAvgElixir)}`);
-    cs.evalScript(`var redInit = ${JSON.stringify(redInit)}`);
+    const overlayStats = {
+      battleLength: replay.replayData.endTick / 20,
+      blueDeck,
+      blueAverageElixir: averageElixir(blueDeck),
+      redDeck,
+      redAverageElixir: averageElixir(redDeck),
+      redInit,
+    };
+    cs.evalScript(`var overlayStats = ${JSON.stringify(overlayStats)}`);
     cs.evalScript(`$.deckOverlay.battleOverlay()`);
   } catch (e) {}
 }

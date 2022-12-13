@@ -43,7 +43,5 @@ statForm.addEventListener("submit", (e) => {
     0
   );
 
-
-
   console.log(deckStats);
 });
