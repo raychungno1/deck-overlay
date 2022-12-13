@@ -195,6 +195,6 @@ async function battleOverlay(replayTag = "", playerName = "") {
     cs.evalScript(`var redDeck = ${JSON.stringify(redDeck)}`);
     cs.evalScript(`var redAvgElixir = ${JSON.stringify(redAvgElixir)}`);
     cs.evalScript(`var redInit = ${JSON.stringify(redInit)}`);
-    cs.evalScript(`$.deckOverlay.battle()`);
+    cs.evalScript(`$.deckOverlay.battleOverlay()`);
   } catch (e) {}
 }

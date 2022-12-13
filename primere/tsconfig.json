@@ -5,5 +5,4 @@
     "noLib": true,
     "checkJs": true
   }
-  // "include": ["**/*.ts"]
 }

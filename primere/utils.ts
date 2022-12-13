@@ -7,6 +7,12 @@ const MOTION = 1;
 const POSITION = 0;
 const SCALE = 1;
 
+const COMMON = 5;
+const RARE = 3.75;
+const EPIC = 2.5;
+const LEGENDARY = 1.25;
+const HERO = 0;
+
 function findShallow(binName: string, root: ProjectItem) {
   if (!binName || !root) return;
 
@@ -52,8 +58,82 @@ function time(seconds) {
   return time;
 }
 
-function setImageLength(image: TrackItem, seconds: number) {
+function setItemLength(item: TrackItem, seconds: number) {
   try {
-    image.end = time(seconds);
+    item.end = time(seconds);
   } catch (e) {}
+}
+
+function addItemToTrack({
+  track,
+  item,
+  startSeconds = 0,
+  endSeconds,
+  position,
+  scale,
+  opacity,
+}: {
+  track: Track;
+  item: ProjectItem;
+  startSeconds?: number;
+  endSeconds?: number;
+  position?: number[];
+  scale?: number;
+  opacity?: number;
+}) {
+  let clipIdx = 0;
+  for (let i = 0; i < track.clips.numItems; i++) {
+    if (track.clips[i].start.seconds >= startSeconds) {
+      clipIdx = i;
+      break;
+    }
+    if (i === track.clips.numItems - 1) clipIdx = i + 1;
+  }
+  track.overwriteClip(item, startSeconds);
+  const trackItem = track.clips[clipIdx];
+  if (endSeconds) {
+    setItemLength(trackItem, endSeconds);
+  }
+
+  const motion = trackItem.components[MOTION].properties;
+  if (position) {
+    motion[POSITION].setValue(position);
+  }
+  if (scale) {
+    motion[SCALE].setValue(scale);
+  }
+
+  if (opacity) {
+    const opacityAttr = trackItem.components[OPACITY].properties;
+    opacityAttr[OPACITY].setValue(opacity);
+  }
+
+  return trackItem;
+}
+
+function addKeyframes({
+  trackItem,
+  property,
+  baseTime,
+  keyframes,
+}: {
+  trackItem: TrackItem;
+  property: "position" | "scale" | "opacity";
+  baseTime: number;
+  keyframes: { key: number; value: number | number[] }[];
+}) {
+  let trackProperty;
+  if (property === "position") {
+    trackProperty = trackItem.components[MOTION].properties[POSITION];
+  } else if (property === "scale") {
+    trackProperty = trackItem.components[MOTION].properties[SCALE];
+  } else if (property === "opacity") {
+    trackProperty = trackItem.components[OPACITY].properties[OPACITY];
+  }
+
+  trackProperty.setTimeVarying(true);
+  for (const { key, value } of keyframes) {
+    trackProperty.addKey(baseTime + key);
+    trackProperty.setValueAtKey(baseTime + key, value);
+  }
 }

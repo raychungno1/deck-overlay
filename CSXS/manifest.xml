@@ -20,7 +20,7 @@
 			<DispatchInfo>
 				<Resources>
 					<MainPath>./build/index.html</MainPath>
-					<ScriptPath>./build/primere/overlay.js</ScriptPath>
+					<ScriptPath>./build/primere/index.js</ScriptPath>
 					<CEFCommandLine>
 						<Parameter>--allow-file-access</Parameter>
 						<Parameter>--allow-file-access-from-files</Parameter>
