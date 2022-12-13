@@ -1,16 +1,16 @@
 /* @ts-ignore */ // Object to interact with primere
 const cs = new CSInterface();
 
-// BATTLE OVERLAY
-loadBattles("#L008PR8C");
-
+// Battle overlay
 const battleForm = document.getElementById("player-form");
+loadBattles("#L008PR8C");
 battleForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const input = <HTMLInputElement>document.getElementById("playerId");
   loadBattles(input.value);
 });
 
+// Getting battle log from playerId
 async function loadBattles(playerId) {
   try {
     const log = await getBattlelog(playerId);
@@ -20,58 +20,7 @@ async function loadBattles(playerId) {
   }
 }
 
-async function battleOverlay(replayTag = "", playerName = "") {
-  try {
-    const replay = await getReplay(replayTag);
-    const battle = replay.replayData.battle;
-    const battleLength = replay.replayData.endTick / 20;
-    const flip = battle.avatar0.name !== playerName;
-
-    // Parsing Deck Cards
-    const blueDeck: Cards = {};
-    const redDeck: Cards = {};
-    const offset = flip ? 1 : 0;
-    for (let i = 0; i < 8; i++) {
-      const blueId = battle[`deck${offset}`][i].d;
-      const redId = battle[`deck${1 - offset}`][i].d;
-      blueDeck[blueId] = CARDS[blueId];
-      redDeck[redId] = CARDS[redId];
-    }
-    const blueAvgElixir = averageElixir(blueDeck);
-    const redAvgElixir = averageElixir(redDeck);
-
-    // Parsing First Time Each Red Card Was Played
-    const redInit = {};
-    const redPlayerId = battle[`avatar${1 - offset}`]["accountID.hi"];
-    const commands = replay.replayData.cmd;
-    for (let i = 0; i < commands.length; i++) {
-      const {
-        c: { t2: time, gid: id, idHi: playerId },
-      } = commands[i];
-
-      if (playerId == redPlayerId && id in redDeck && !(id in redInit)) {
-        redInit[id] = time / 20;
-      }
-    }
-
-    cs.evalScript(`var battleLength = ${JSON.stringify(battleLength)}`);
-    cs.evalScript(`var blueDeck = ${JSON.stringify(blueDeck)}`);
-    cs.evalScript(`var blueAvgElixir = ${JSON.stringify(blueAvgElixir)}`);
-    cs.evalScript(`var redDeck = ${JSON.stringify(redDeck)}`);
-    cs.evalScript(`var redAvgElixir = ${JSON.stringify(redAvgElixir)}`);
-    cs.evalScript(`var redInit = ${JSON.stringify(redInit)}`);
-    cs.evalScript(`$.deckOverlay.battle()`);
-  } catch (e) {}
-}
-
-function averageElixir(deck: Cards) {
-  let total = 0;
-  for (let key in deck) {
-    total += deck[key].cost;
-  }
-  return Math.round((total * 10) / 8);
-}
-
+// Displays battle log from clash royale API
 function displayDecks(battlelog) {
   if (!battlelog || !battlelog.length)
     return displayError("Error: No Battles Found");
@@ -152,12 +101,15 @@ function displayDecks(battlelog) {
     blueTipsBtnEl.innerHTML = '<i class="fa-solid fa-lightbulb"></i> Tips';
     blueDeckActionsEl.appendChild(blueTipsBtnEl);
 
-    const btnEl = createElement("button", {
-      class: "battle__action deck-actions",
-    });
-    btnEl.onclick = () => battleOverlay(battle.replayTag, battle.team[0].name);
-    btnEl.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Overlay';
-    deckActionsEl.appendChild(btnEl);
+    if (battle.replayTag) {
+      const btnEl = createElement("button", {
+        class: "battle__action deck-actions",
+      });
+      btnEl.onclick = () =>
+        battleOverlay(battle.replayTag, battle.team[0].name);
+      btnEl.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Overlay';
+      deckActionsEl.appendChild(btnEl);
+    }
 
     const redDeckActionsEl = createElement("div", { class: "deck-actions" });
     deckActionsEl.appendChild(redDeckActionsEl);
@@ -176,6 +128,7 @@ function displayDecks(battlelog) {
   }
 }
 
+// Displays error if API is non-responsive
 function displayError(error) {
   const battlesEl = document.getElementById("battles");
   clearElement(battlesEl);
@@ -190,4 +143,58 @@ function displayError(error) {
   errorEl.appendChild(errorIconEl);
   errorEl.appendChild(errorMsgEl);
   battlesEl.appendChild(errorEl);
+}
+
+// Calculates average elixir of a deck
+function averageElixir(deck: Cards | Card[]) {
+  let total = 0;
+  for (let key in deck) {
+    total += deck[key]?.cost;
+  }
+  return Math.round((total * 10) / 8);
+}
+
+// Generating battle overlay
+async function battleOverlay(replayTag = "", playerName = "") {
+  try {
+    const replay = await getReplay(replayTag);
+    const battle = replay.replayData.battle;
+    const battleLength = replay.replayData.endTick / 20;
+    const flip = battle.avatar0.name !== playerName;
+
+    // Parsing Deck Cards
+    const blueDeck: Cards = {};
+    const redDeck: Cards = {};
+    const offset = flip ? 1 : 0;
+    for (let i = 0; i < 8; i++) {
+      const blueId = battle[`deck${offset}`][i].d;
+      const redId = battle[`deck${1 - offset}`][i].d;
+      blueDeck[blueId] = CARDS[blueId];
+      redDeck[redId] = CARDS[redId];
+    }
+    const blueAvgElixir = averageElixir(blueDeck);
+    const redAvgElixir = averageElixir(redDeck);
+
+    // Parsing First Time Each Red Card Was Played
+    const redInit = {};
+    const redPlayerId = battle[`avatar${1 - offset}`]["accountID.hi"];
+    const commands = replay.replayData.cmd;
+    for (let i = 0; i < commands.length; i++) {
+      const {
+        c: { t2: time, gid: id, idHi: playerId },
+      } = commands[i];
+
+      if (playerId == redPlayerId && id in redDeck && !(id in redInit)) {
+        redInit[id] = time / 20;
+      }
+    }
+
+    cs.evalScript(`var battleLength = ${JSON.stringify(battleLength)}`);
+    cs.evalScript(`var blueDeck = ${JSON.stringify(blueDeck)}`);
+    cs.evalScript(`var blueAvgElixir = ${JSON.stringify(blueAvgElixir)}`);
+    cs.evalScript(`var redDeck = ${JSON.stringify(redDeck)}`);
+    cs.evalScript(`var redAvgElixir = ${JSON.stringify(redAvgElixir)}`);
+    cs.evalScript(`var redInit = ${JSON.stringify(redInit)}`);
+    cs.evalScript(`$.deckOverlay.battle()`);
+  } catch (e) {}
 }

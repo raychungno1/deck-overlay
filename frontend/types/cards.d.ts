@@ -1,8 +1,8 @@
 interface Card {
+  id: string;
   name: string;
   cost: number;
   rarity: number;
-  dsName: string;
 }
 
 interface Cards {

@@ -71,7 +71,7 @@ function camelCaseToCapitalized(text: string): string {
  * @param selectOrId either the select element or its id
  */
 function selectCardsAlphabetic(idOrSelect: string | HTMLInputElement) {
-  const select = getElement(idOrSelect);
+  const select = getElement(idOrSelect) as HTMLInputElement;
   const cardsArray = Object.keys(CARDS).map((id) => ({ id, ...CARDS[id] }));
   cardsArray.sort((a, b) => (a.name > b.name ? 1 : -1));
   cardsArray.forEach(({ id, name }) => {

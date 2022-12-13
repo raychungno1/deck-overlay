@@ -1,3 +1,5 @@
 *.zip
 secret.js
-env.ts
+*env.ts
+*/frontend/app.js
+primere
