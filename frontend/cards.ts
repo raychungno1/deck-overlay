@@ -561,7 +561,7 @@ const CARDS: Cards = {
     id: "27000006",
     name: "tesla",
     cost: 4,
-    rarity: LEGENDARY,
+    rarity: COMMON,
   },
   27000008: {
     id: "27000008",

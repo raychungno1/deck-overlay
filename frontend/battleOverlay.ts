@@ -151,7 +151,7 @@ function averageElixir(deck: Cards | Card[]) {
   for (let key in deck) {
     total += deck[key]?.cost;
   }
-  return Math.round((total * 10) / 8);
+  return Math.round((total * 10) / 8) / 10;
 }
 
 // Generating battle overlay
@@ -186,15 +186,15 @@ async function battleOverlay(replayTag = "", playerName = "") {
       }
     }
 
-    const overlayStats = {
+    const overlayInfo = {
       battleLength: replay.replayData.endTick / 20,
       blueDeck,
-      blueAverageElixir: averageElixir(blueDeck),
+      blueAverageElixir: averageElixir(blueDeck).toFixed(1),
       redDeck,
-      redAverageElixir: averageElixir(redDeck),
+      redAverageElixir: averageElixir(redDeck).toFixed(1),
       redInit,
     };
-    cs.evalScript(`var overlayStats = ${JSON.stringify(overlayStats)}`);
+    cs.evalScript(`var overlayInfo = ${JSON.stringify(overlayInfo)}`);
     cs.evalScript(`$.deckOverlay.battleOverlay()`);
   } catch (e) {}
 }

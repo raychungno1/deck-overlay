@@ -2,11 +2,17 @@ const EXCLUDE_BINS = ["TRANSITIONPUNCH_5.0", "SFX"];
 const WIDTH = 1920;
 const HEIGHT = 1080;
 
+// Properties
 const OPACITY = 0;
 const MOTION = 1;
 const POSITION = 0;
 const SCALE = 1;
 
+// Average Elixir MOGRT
+const RED_AVG_ELIXIR = 0;
+const BLUE_AVG_ELIXIR = 1;
+
+// Rarity
 const COMMON = 5;
 const RARE = 3.75;
 const EPIC = 2.5;
@@ -43,6 +49,21 @@ function find(binName: string, root: ProjectItem, excludes: string[]) {
       if (found) return found;
     }
   }
+}
+
+function findSequence(project: Project, sequenceName: string) {
+  for (let i = 0; i < project.sequences.numSequences; i++) {
+    if (project.sequences[i].name === sequenceName) {
+      return project.sequences[i];
+    }
+  }
+}
+
+function copySequence(sequence: Sequence, name: string) {
+  sequence.videoTracks[0].setTargeted(true, true);
+  const seq = sequence.createSubsequence(true);
+  seq.name = name;
+  return seq;
 }
 
 function indexOf(arr: string[], val: string) {

@@ -1,6 +1,6 @@
 //@include utils.js;
 
-const overlayStats: any = {};
+const overlayInfo: any = {};
 
 const battleOverlay = () => {
   const {
@@ -10,16 +10,17 @@ const battleOverlay = () => {
     redDeck,
     redAverageElixir,
     redInit,
-  } = overlayStats;
+  } = overlayInfo;
 
   const ROOT_PROJECT = app.project;
   const ROOT_BIN = ROOT_PROJECT.rootItem;
 
   // Loading Assets
   const CARDS_BIN = findShallow("cards", ROOT_BIN);
-  const AVG_BLUE_BIN = findShallow("avg-elixir-blue", ROOT_BIN);
-  const AVG_RED_BIN = findShallow("avg-elixir-red", ROOT_BIN);
-  const DECK_OVERLAY_BIN = findShallow("deck-overlay", ROOT_BIN);
+  const BATTLE_OVERLAY_BIN = findShallow("battle-overlay", ROOT_BIN);
+  const SRC_BIN = findShallow("src", BATTLE_OVERLAY_BIN);
+  const AVG_BLUE_BIN = findShallow("avg-elixir-blue", SRC_BIN);
+  const AVG_RED_BIN = findShallow("avg-elixir-red", SRC_BIN);
   const CARD_HIGHLIGHTS = {
     [COMMON]: findShallow("whiteCommon.png", CARDS_BIN),
     [RARE]: findShallow("whiteRare.png", CARDS_BIN),
@@ -28,49 +29,32 @@ const battleOverlay = () => {
     [HERO]: findShallow("whiteHero.png", CARDS_BIN),
   };
 
-  // Finding sequence preset
-  let sampleSeq: Sequence;
-  for (let i = 0; i < ROOT_PROJECT.sequences.numSequences; i++) {
-    if (ROOT_PROJECT.sequences[i].name === "deck-overlay-sample") {
-      sampleSeq = ROOT_PROJECT.sequences[i];
-      break;
-    }
-  }
-
   // Copying preset & moving to folder
-  const seqName = `d${DECK_OVERLAY_BIN.children.numItems}`;
-  sampleSeq.videoTracks[0].setTargeted(true, true);
-  const seq = sampleSeq.createSubsequence(true);
-  seq.name = seqName;
+  const seq = copySequence(
+    findSequence(ROOT_PROJECT, "battle-overlay-sample"),
+    `d${BATTLE_OVERLAY_BIN.children.numItems - 1}`
+  );
   const seqBin = find(seq.name, ROOT_BIN, EXCLUDE_BINS);
-  seqBin.moveBin(DECK_OVERLAY_BIN);
+  seqBin.moveBin(BATTLE_OVERLAY_BIN);
 
   // Adding background
   addItemToTrack({
     track: seq.videoTracks[0],
-    item: findShallow("deck-board.png", ROOT_BIN),
+    item: findShallow("deck-board.png", SRC_BIN),
     endSeconds: battleLength,
   });
 
-  // Adding blue average elixir
-  addItemToTrack({
-    track: seq.videoTracks[1],
-    item: findShallow(`blue-${blueAverageElixir}.png`, AVG_BLUE_BIN),
-    endSeconds: battleLength,
-  });
-
-  // Adding red average elixir
-  addItemToTrack({
-    track: seq.videoTracks[2],
-    item: findShallow(`red-${redAverageElixir}.png`, AVG_RED_BIN),
-    endSeconds: battleLength,
-  });
+  // Adding average elixir
+  const avgElixirMOGRT = seq.videoTracks[1].clips[0].getMGTComponent();
+  avgElixirMOGRT.properties[BLUE_AVG_ELIXIR].setValue(blueAverageElixir);
+  avgElixirMOGRT.properties[RED_AVG_ELIXIR].setValue(redAverageElixir);
+  setItemLength(seq.videoTracks[1].clips[0], battleLength);
 
   // Adding Blue Cards
   let i = 0;
   for (let cardId in blueDeck) {
     addItemToTrack({
-      track: seq.videoTracks[i + 3],
+      track: seq.videoTracks[i + 2],
       item: findShallow(`${blueDeck[cardId].name}.png`, CARDS_BIN),
       endSeconds: battleLength,
       position: [(95 + 117.5 * i) / WIDTH, 1010 / HEIGHT],
@@ -82,8 +66,8 @@ const battleOverlay = () => {
   // Adding Red Cards
   i = 0;
   for (let cardId in redDeck) {
-    const cardTrack = seq.videoTracks[i * 2 + 11];
-    const highlightTrack = seq.videoTracks[i * 2 + 12];
+    const cardTrack = seq.videoTracks[i * 2 + 10];
+    const highlightTrack = seq.videoTracks[i * 2 + 11];
     const cardPosition = [(95 + 117.5 * i) / WIDTH, 70 / HEIGHT];
 
     // If card was never played, empty card full duration

@@ -18,15 +18,8 @@
       "type": "extendscript-debug",
       "request": "launch",
       "hostAppSpecifier": "premierepro-14.0",
-      "name": "Test",
-      "script": "${workspaceFolder}/build/test.js",
-    },
-    {
-      "type": "extendscript-debug",
-      "request": "launch",
-      "hostAppSpecifier": "premierepro-14.0",
-      "name": "Overlay",
-      "script": "${workspaceFolder}/build/overlay.js",
+      "name": "test",
+      "script": "${workspaceFolder}/build/primere/test.js",
     }
   ]
 }

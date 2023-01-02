@@ -145,21 +145,21 @@ tipsForm.addEventListener("submit", (e) => {
 
   const cardIds = tipsDeckLink.value.match(/(\d{8})/g);
   const tempCards = cardIds.map((id) => CARDS[id]);
-  const deckTips = {
+  const tipsInfo = {
     cards: tempCards.slice(),
     playstyle: playstyleEl.value,
     matchups: deckMatchups,
     subs: deckSubs,
   };
-  deckTips["averageElixir"] = averageElixir(deckTips.cards);
+  tipsInfo["averageElixir"] = averageElixir(tipsInfo.cards);
   tempCards.sort((c1, c2) => (c1.cost > c2.cost ? 1 : -1));
-  deckTips["cycleCards"] = tempCards
+  tipsInfo["cycleCards"] = tempCards
     .filter(({ name }) => name !== "mirror")
     .slice(0, 4);
-  deckTips["cycleCost"] = deckTips["cycleCards"].reduce(
+  tipsInfo["cycleCost"] = tipsInfo["cycleCards"].reduce(
     (prev, { cost }) => prev + cost,
     0
   );
 
-  console.log(deckTips);
+  console.log(tipsInfo);
 });

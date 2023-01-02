@@ -29,19 +29,19 @@ statForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
   const cardIds = statDeckLink.value.match(/(\d{8})/g);
-  const deckStats = {
+  const statsInfo = {
     cards: cardIds.map((id) => CARDS[id]),
   };
-  deckStats["averageElixir"] = averageElixir(deckStats.cards)
+  statsInfo["averageElixir"] = averageElixir(statsInfo.cards)
 
   // Parsing input stats
-  STATS.forEach((stat, i) => (deckStats[stat] = +statSelects[i].value));
+  STATS.forEach((stat, i) => (statsInfo[stat] = +statSelects[i].value));
 
   // Calculating f2p score
-  deckStats["f2p"] = deckStats.cards.reduce(
+  statsInfo["f2p"] = statsInfo.cards.reduce(
     (prev, card) => prev + card.rarity / 8,
     0
   );
 
-  console.log(deckStats);
+  console.log(statsInfo);
 });
