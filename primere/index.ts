@@ -1,5 +1,7 @@
 //@include battleOverlay.js;
+//@include deckStats.js;
 
 $.deckOverlay = {
-  battleOverlay: battleOverlay
+  battleOverlay,
+  deckStats,
 };

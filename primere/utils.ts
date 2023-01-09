@@ -7,10 +7,8 @@ const OPACITY = 0;
 const MOTION = 1;
 const POSITION = 0;
 const SCALE = 1;
-
-// Average Elixir MOGRT
-const RED_AVG_ELIXIR = 0;
-const BLUE_AVG_ELIXIR = 1;
+const SCALEX = 2;
+const SCALEY = 1;
 
 // Rarity
 const COMMON = 5;
@@ -139,7 +137,7 @@ function addKeyframes({
   keyframes,
 }: {
   trackItem: TrackItem;
-  property: "position" | "scale" | "opacity";
+  property: "position" | "scale" | "scalex" | "scaley" | "opacity";
   baseTime: number;
   keyframes: { key: number; value: number | number[] }[];
 }) {
@@ -147,7 +145,14 @@ function addKeyframes({
   if (property === "position") {
     trackProperty = trackItem.components[MOTION].properties[POSITION];
   } else if (property === "scale") {
+    trackItem.components[MOTION].properties[3].setValue(true);
     trackProperty = trackItem.components[MOTION].properties[SCALE];
+  } else if (property === "scalex") {
+    trackItem.components[MOTION].properties[3].setValue(false);
+    trackProperty = trackItem.components[MOTION].properties[SCALEX];
+  } else if (property === "scaley") {
+    trackItem.components[MOTION].properties[3].setValue(false);
+    trackProperty = trackItem.components[MOTION].properties[SCALEY];
   } else if (property === "opacity") {
     trackProperty = trackItem.components[OPACITY].properties[OPACITY];
   }

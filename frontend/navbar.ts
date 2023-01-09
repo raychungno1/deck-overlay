@@ -1,7 +1,6 @@
 enum Page {
   BATTLE_OVERLAY = 0,
   DECK_STATS = 1,
-  DECK_TIPS = 2,
 }
 
 /**
@@ -10,20 +9,20 @@ enum Page {
  */
 const selectPage = (() => {
   // Load nav links add onclick listeners
-  const links = ["battle-nav", "stats-nav", "tips-nav"].map((id, i) => {
+  const links = ["battle-nav", "stats-nav"].map((id, i) => {
     const link = document.getElementById(id);
     link.onclick = () => selectPage(i);
     return link;
   });
 
   // Load page containers
-  const pages = ["battle-page", "stats-page", "tips-page"].map((id) => {
+  const pages = ["battle-page", "stats-page"].map((id) => {
     return document.getElementById(id);
   });
 
   // Function definition
   const selectPage = (target: Page) => {
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 2; i++) {
       if (i === target) {
         links[i].classList.add("selected");
         pages[i].classList.remove("page__hidden");

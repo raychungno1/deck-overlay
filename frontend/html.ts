@@ -50,9 +50,9 @@ function sliderWithLabel(
   const slider = <HTMLInputElement>document.getElementById(sliderId);
   const label = document.getElementById(labelId);
   label.textContent = slider.value + (end || "");
-  slider.oninput = (e: Event) => {
+  slider.addEventListener("change", (e: Event) => {
     label.textContent = (e.target as HTMLInputElement).value + (end || "");
-  };
+  });
   return slider;
 }
 

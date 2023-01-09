@@ -15,12 +15,14 @@ const battleOverlay = () => {
   const ROOT_PROJECT = app.project;
   const ROOT_BIN = ROOT_PROJECT.rootItem;
 
+  // Average Elixir MOGRT
+  const RED_AVG_ELIXIR = 0;
+  const BLUE_AVG_ELIXIR = 1;
+
   // Loading Assets
   const CARDS_BIN = findShallow("cards", ROOT_BIN);
   const BATTLE_OVERLAY_BIN = findShallow("battle-overlay", ROOT_BIN);
   const SRC_BIN = findShallow("src", BATTLE_OVERLAY_BIN);
-  const AVG_BLUE_BIN = findShallow("avg-elixir-blue", SRC_BIN);
-  const AVG_RED_BIN = findShallow("avg-elixir-red", SRC_BIN);
   const CARD_HIGHLIGHTS = {
     [COMMON]: findShallow("whiteCommon.png", CARDS_BIN),
     [RARE]: findShallow("whiteRare.png", CARDS_BIN),
@@ -108,51 +110,51 @@ const battleOverlay = () => {
       startSeconds: redInit[cardId],
       endSeconds: battleLength,
       position: cardPosition,
+      scale: 39,
     });
 
-    // Highlight card image
-    const highlightCard = addItemToTrack({
-      track: highlightTrack,
-      item: CARD_HIGHLIGHTS[redDeck[cardId].rarity],
-      startSeconds: redInit[cardId],
-      position: cardPosition,
-    });
+    if (redInit[cardId] >= 0) {
+      // Highlight card image
+      const highlightCard = addItemToTrack({
+        track: highlightTrack,
+        item: CARD_HIGHLIGHTS[redDeck[cardId].rarity],
+        startSeconds: redInit[cardId],
+        position: cardPosition,
+      });
 
-    const cardKeyframes = [
-      { key: 0, value: 0 },
-      { key: 0.1, value: 56 },
-      { key: 0.13, value: 54 },
-      { key: 0.83, value: 54 },
-      { key: 0.93, value: 56 },
-      { key: 1.03, value: 54 },
-      { key: 1.13, value: 36 },
-      { key: 1.23, value: 39 },
-    ];
-
-    addKeyframes({
-      trackItem: card,
-      property: "scale",
-      baseTime: card.inPoint.seconds,
-      keyframes: cardKeyframes,
-    });
-
-    addKeyframes({
-      trackItem: highlightCard,
-      property: "scale",
-      baseTime: highlightCard.inPoint.seconds,
-      keyframes: cardKeyframes,
-    });
-
-    addKeyframes({
-      trackItem: highlightCard,
-      property: "opacity",
-      baseTime: highlightCard.inPoint.seconds,
-      keyframes: [
-        { key: 0.1, value: 0 },
-        { key: 0.13, value: 90 },
-        { key: 0.33, value: 0 },
-      ],
-    });
+      const cardKeyframes = [
+        { key: 0, value: 0 },
+        { key: 0.1, value: 56 },
+        { key: 0.13, value: 54 },
+        { key: 0.83, value: 54 },
+        { key: 0.93, value: 56 },
+        { key: 1.03, value: 54 },
+        { key: 1.13, value: 36 },
+        { key: 1.23, value: 39 },
+      ];
+      addKeyframes({
+        trackItem: card,
+        property: "scale",
+        baseTime: card.inPoint.seconds,
+        keyframes: cardKeyframes,
+      });
+      addKeyframes({
+        trackItem: highlightCard,
+        property: "scale",
+        baseTime: highlightCard.inPoint.seconds,
+        keyframes: cardKeyframes,
+      });
+      addKeyframes({
+        trackItem: highlightCard,
+        property: "opacity",
+        baseTime: highlightCard.inPoint.seconds,
+        keyframes: [
+          { key: 0.1, value: 0 },
+          { key: 0.13, value: 90 },
+          { key: 0.33, value: 0 },
+        ],
+      });
+    }
 
     i += 1;
   }

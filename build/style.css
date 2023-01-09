@@ -93,6 +93,11 @@ input {
   overflow: hidden;
 }
 
+.text__right {
+  text-align: right;
+  margin-left: auto !important;
+}
+
 .subtitle {
   color: #959595;
   font-size: 0.6rem;
@@ -187,7 +192,8 @@ input {
   border-bottom: 2px solid #b1b1b1;
 }
 
-.page__hidden {
+.page__hidden,
+.hidden {
   display: none;
 }
 

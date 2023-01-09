@@ -20,10 +20,40 @@
           Battle Overlay
         </p>
         <p class="navbar__link title" id="stats-nav">Deck Stats</p>
-        <p class="navbar__link title" id="tips-nav">Deck Tips</p>
       </div>
     </nav>
     <div id="battle-page" class="">
+      <form class="form">
+        <div class="container form__input">
+          <p class="form__label label-width">Blue Link</p>
+          <input
+            class="form__text full-width"
+            type="text"
+            name="blue-deck-link"
+            id="blue-deck-link"
+            placeholder="Deck Link"
+            value="https://link.clashroyale.com/deck/en?deck=26000063;26000067;26000068;26000077;26000087;28000006;28000012;28000016"
+          />
+        </div>
+        <div class="container deck__preview" id="blue-deck-preview"></div>
+        <div class="container form__input">
+          <p class="form__label label-width">Red Link</p>
+          <input
+            class="form__text full-width"
+            type="text"
+            name="red-deck-link"
+            id="red-deck-link"
+            placeholder="Deck Link"
+            value="https://link.clashroyale.com/deck/en?deck=26000063;26000067;26000068;26000077;26000087;28000006;28000012;28000016"
+          />
+        </div>
+        <div class="container deck__preview" id="red-deck-preview"></div>
+        <div class="container">
+          <button class="battle__action deck-actions" id="link-deck-overlay">
+            <i class="fa-solid fa-shield-halved"></i> Overlay
+          </button>
+        </div>
+      </form>
       <form class="form" id="player-form">
         <div class="container form__input">
           <p class="form__label label-width">Player Tag</p>
@@ -45,7 +75,7 @@
     <div id="stats-page" class="page__hidden">
       <form class="form" id="stat-form">
         <div class="container form__input">
-          <p class="form__label label-width">Deck Link</p>
+          <p class="form__label label-width">Link</p>
           <input
             class="form__text full-width"
             type="text"
@@ -56,6 +86,16 @@
           />
         </div>
         <div class="container deck__preview" id="stat-deck-preview"></div>
+        <div class="container form__input">
+          <p class="form__label label-width">Title</p>
+          <input
+            class="form__text"
+            type="text"
+            name="stat-deck-title"
+            id="stat-deck-title"
+            placeholder="Deck Title"
+          />
+        </div>
         <div class="container form__input">
           <p class="form__label label-width">Attack</p>
           <input
@@ -108,39 +148,6 @@
           />
           <p class="form__label" id="stat-synergy-lbl">3</p>
         </div>
-        <div class="container">
-          <button class="battle__action" type="submit">
-            <i class="fa-solid fa-shield-halved"></i> Overlay
-          </button>
-        </div>
-      </form>
-    </div>
-    <div id="tips-page" class="page__hidden">
-      <form class="form" id="tips-form">
-        <div class="container form__input">
-          <p class="form__label label-width">Deck Link</p>
-          <input
-            class="form__text full-width"
-            type="text"
-            name="tips-deck-link"
-            id="tips-deck-link"
-            placeholder="Deck Link"
-            value="https://link.clashroyale.com/deck/en?deck=26000063;26000067;26000068;26000077;26000087;28000006;28000012;28000016"
-          />
-        </div>
-        <div class="container deck__preview" id="tips-deck-preview"></div>
-        <div class="container form__input">
-          <p class="form__label label-width">Playstyle</p>
-          <select class="form__select" name="playstyle" id="playstyle">
-            <option value="beatdown">Beatdown</option>
-            <option value="control">Control</option>
-            <option value="punish">Punish</option>
-            <option value="chip">Chip</option>
-            <option value="siege">Siege</option>
-            <option value="bait">Spell Bait</option>
-            <option value="split">Split Lane</option>
-          </select>
-        </div>
         <div class="container form__input form__tall">
           <p class="form__label label-width matchup__label">Matchups</p>
           <div>
@@ -148,79 +155,97 @@
               <select
                 class="form__select"
                 name="matchup-list"
-                id="matchup-1-list"
+                id="matchup-1-list-ds"
               ></select>
               <input
                 class="matchup__slider"
                 type="range"
-                id="matchup-1-slider"
+                id="matchup-1-slider-ds"
                 name="matchup"
                 min="0"
                 max="100"
                 step="5"
-                value="75"
+                value="70"
               />
-              <p class="form__label" id="matchup-1-lbl">75%</p>
+              <p class="form__label" id="matchup-1-lbl-ds">75%</p>
             </div>
             <div class="form__matchup">
               <select
                 class="form__select"
                 name="matchup-list"
-                id="matchup-2-list"
+                id="matchup-2-list-ds"
               ></select>
               <input
                 class="matchup__slider"
                 type="range"
-                id="matchup-2-slider"
+                id="matchup-2-slider-ds"
                 name="matchup"
                 min="0"
                 max="100"
                 step="5"
-                value="65"
+                value="60"
               />
-              <p class="form__label" id="matchup-2-lbl">65%</p>
+              <p class="form__label" id="matchup-2-lbl-ds">65%</p>
             </div>
             <div class="form__matchup">
               <select
                 class="form__select"
                 name="matchup-list"
-                id="matchup-3-list"
+                id="matchup-3-list-ds"
               ></select>
               <input
                 class="matchup__slider"
                 type="range"
-                id="matchup-3-slider"
+                id="matchup-3-slider-ds"
                 name="matchup"
                 min="0"
                 max="100"
                 step="5"
                 value="50"
               />
-              <p class="form__label" id="matchup-3-lbl">50%</p>
+              <p class="form__label" id="matchup-3-lbl-ds">50%</p>
             </div>
             <div class="form__matchup">
               <select
                 class="form__select"
                 name="matchup-list"
-                id="matchup-4-list"
+                id="matchup-4-list-ds"
               ></select>
               <input
                 class="matchup__slider"
                 type="range"
-                id="matchup-4-slider"
+                id="matchup-4-slider-ds"
                 name="matchup"
                 min="0"
                 max="100"
                 step="5"
                 value="40"
               />
-              <p class="form__label" id="matchup-4-lbl">40%</p>
+              <p class="form__label" id="matchup-4-lbl-ds">40%</p>
             </div>
           </div>
         </div>
-        <div class="container form__input form__tall">
-          <p class="form__label label-width">Substitutes</p>
-          <div class="subs__container" id="subs-container"></div>
+        <div class="container form__input">
+          <p class="form__label label-width">Tips</p>
+          <input id="tips-toggle" type="checkbox" checked />
+        </div>
+        <div id="deck-tips-container">
+          <div class="container form__input">
+            <p class="form__label label-width">Playstyle</p>
+            <select class="form__select" name="playstyle" id="playstyle">
+              <option value="Beatdown">Beatdown</option>
+              <option value="Control">Control</option>
+              <option value="Punish">Punish</option>
+              <option value="Chip">Chip</option>
+              <option value="Siege">Siege</option>
+              <option value="Spell Bait">Spell Bait</option>
+              <option value="Split Lane">Split Lane</option>
+            </select>
+          </div>
+          <div class="container form__input form__tall">
+            <p class="form__label label-width">Substitutes</p>
+            <div class="subs__container" id="subs-container"></div>
+          </div>
         </div>
         <div class="container">
           <button class="battle__action" type="submit">

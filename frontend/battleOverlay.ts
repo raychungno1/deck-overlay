@@ -2,6 +2,52 @@
 const cs = new CSInterface();
 
 // Battle overlay
+
+// Custom battle
+const blueDeckLink = document.getElementById(
+  "blue-deck-link"
+) as HTMLInputElement;
+const redDeckLink = document.getElementById(
+  "red-deck-link"
+) as HTMLInputElement;
+
+// Update functions
+deckPreview(blueDeckLink, "blue-deck-preview");
+deckPreview(redDeckLink, "red-deck-preview");
+blueDeckLink.addEventListener("input", () =>
+  deckPreview(blueDeckLink, "blue-deck-preview")
+);
+redDeckLink.addEventListener("input", () =>
+  deckPreview(redDeckLink, "red-deck-preview")
+);
+
+// Submit custom deck deck overlay
+document.getElementById("link-deck-overlay").addEventListener("click", (e) => {
+  e.preventDefault();
+  const blueDeck = {};
+  blueDeckLink.value.match(/(\d{8})/g).forEach((id) => {
+    blueDeck[id] = CARDS[id];
+  });
+  const redDeck = {};
+  const redInit = {};
+  redDeckLink.value.match(/(\d{8})/g).forEach((id) => {
+    redDeck[id] = CARDS[id];
+    redInit[id] = -5;
+  });
+  const overlayInfo = {
+    battleLength: 360,
+    blueDeck,
+    blueAverageElixir: averageElixir(blueDeck).toFixed(1),
+    redDeck,
+    redAverageElixir: averageElixir(redDeck).toFixed(1),
+    redInit,
+  };
+  console.log(overlayInfo);
+  cs.evalScript(`var overlayInfo = ${JSON.stringify(overlayInfo)}`);
+  cs.evalScript(`$.deckOverlay.battleOverlay()`);
+});
+
+// Player lookup
 const battleForm = document.getElementById("player-form");
 loadBattles("#L008PR8C");
 battleForm.addEventListener("submit", (e) => {
@@ -50,9 +96,9 @@ function displayDecks(battlelog) {
     blueEl.appendChild(blueDeckEl);
 
     const redEl = createElement("div", { class: "red__container" });
-    const redTitleEl = createElement("p", { class: "title" });
+    const redTitleEl = createElement("p", { class: "title text__right" });
     redTitleEl.textContent = `${battle.opponent[0].name}`;
-    const redSubtitleEl = createElement("p", { class: "subtitle" });
+    const redSubtitleEl = createElement("p", { class: "subtitle text__right" });
     redSubtitleEl.textContent = battle.opponent[0].clan
       ? `${battle.opponent[0].clan.name}`
       : "-";
@@ -96,11 +142,6 @@ function displayDecks(battlelog) {
     blueStatBtnEl.innerHTML = '<i class="fa-solid fa-chart-simple"></i> Stats';
     blueDeckActionsEl.appendChild(blueStatBtnEl);
 
-    const blueTipsBtnEl = createElement("button", { class: "battle__action" });
-    blueTipsBtnEl.onclick = () => setTipsLink(blueDeckLink);
-    blueTipsBtnEl.innerHTML = '<i class="fa-solid fa-lightbulb"></i> Tips';
-    blueDeckActionsEl.appendChild(blueTipsBtnEl);
-
     if (battle.replayTag) {
       const btnEl = createElement("button", {
         class: "battle__action deck-actions",
@@ -118,11 +159,6 @@ function displayDecks(battlelog) {
     redStatBtnEl.onclick = () => setStatLink(redDeckLink);
     redStatBtnEl.innerHTML = '<i class="fa-solid fa-chart-simple"></i> Stats';
     redDeckActionsEl.appendChild(redStatBtnEl);
-
-    const redTipsBtnEl = createElement("button", { class: "battle__action" });
-    redTipsBtnEl.onclick = () => setTipsLink(redDeckLink);
-    redTipsBtnEl.innerHTML = '<i class="fa-solid fa-lightbulb"></i> Tips';
-    redDeckActionsEl.appendChild(redTipsBtnEl);
 
     battlesEl.appendChild(battleEl);
   }
@@ -194,6 +230,7 @@ async function battleOverlay(replayTag = "", playerName = "") {
       redAverageElixir: averageElixir(redDeck).toFixed(1),
       redInit,
     };
+    console.log(overlayInfo);
     cs.evalScript(`var overlayInfo = ${JSON.stringify(overlayInfo)}`);
     cs.evalScript(`$.deckOverlay.battleOverlay()`);
   } catch (e) {}
