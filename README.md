@@ -1,6 +1,6 @@
 # Deck Overlays
 
-`Deck Overlays` is an Adobe Premiere Pro extension that streamlines the video creation process for my Clash Royale. 
+`Deck Overlays` is an Adobe Premiere Pro extension that streamlines the video creation process for my Clash Royale videos. 
 
 ---
 
